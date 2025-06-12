@@ -1,16 +1,16 @@
 spring:
   datasource:
     dynamic:
-      primary: postgresql
+      primary: mysql
       datasource:
-        postgresql:
-          driver-class-name: org.postgresql.Driver
-          url: jdbc:postgresql://192.168.10.10:15432/supervisor
-          username: supervisor
-          password: supervisor
         mysql:
           driver-class-name: com.mysql.cj.jdbc.Driver
           url: jdbc:mysql://192.168.10.10:13306/supervisor?allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull
+          username: supervisor
+          password: supervisor
+        postgresql:
+          driver-class-name: org.postgresql.Driver
+          url: jdbc:postgresql://192.168.10.10:15432/supervisor
           username: supervisor
           password: supervisor
 
