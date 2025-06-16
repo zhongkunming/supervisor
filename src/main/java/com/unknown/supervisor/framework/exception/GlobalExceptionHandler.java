@@ -37,7 +37,7 @@ public class GlobalExceptionHandler {
         String message = e.getFieldErrors().stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.joining(", "));
-        log.error("{}", message);
+        log.error("参数校验未通过: {}", message);
         return JsonResult.buildResult(ResultCodeBusiness.PARAM_VALID_FAIL, message);
     }
 
