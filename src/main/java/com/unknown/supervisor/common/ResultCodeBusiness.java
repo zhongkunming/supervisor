@@ -11,8 +11,8 @@ import lombok.Getter;
 public enum ResultCodeBusiness implements ResultCode {
 
     PARAM_VALID_FAIL("80000", "参数校验位未通过: {0}"),
-    USER_NOT_EXIST("81000", "用户不存在")
-    ;
+    USER_NOT_EXIST("81000", "用户不存在"),
+    USERNAME_EXIST("81001", "用户名已存在");
 
 
     private final String code;

@@ -1,8 +1,7 @@
 package com.unknown.supervisor.service;
 
 import com.unknown.supervisor.common.PageResult;
-import com.unknown.supervisor.vo.sys.UserPageInputVo;
-import com.unknown.supervisor.vo.sys.UserPageOutputVo;
+import com.unknown.supervisor.vo.sys.*;
 
 /**
  * @author zhongkunming
@@ -10,4 +9,10 @@ import com.unknown.supervisor.vo.sys.UserPageOutputVo;
 public interface SysUserService {
 
     PageResult<UserPageOutputVo> page(UserPageInputVo input);
+
+    void add(UserAddInputVo input);
+
+    void edit(UserEditInputVo input);
+
+    void delete(UserDeleteInputVo input);
 }

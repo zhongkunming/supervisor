@@ -3,8 +3,7 @@ package com.unknown.supervisor.controller;
 import com.unknown.supervisor.common.JsonResult;
 import com.unknown.supervisor.common.PageResult;
 import com.unknown.supervisor.service.SysUserService;
-import com.unknown.supervisor.vo.sys.UserPageInputVo;
-import com.unknown.supervisor.vo.sys.UserPageOutputVo;
+import com.unknown.supervisor.vo.sys.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +29,27 @@ public class SysUserController {
     @PostMapping("/page")
     public JsonResult<PageResult<UserPageOutputVo>> page(@Validated @RequestBody UserPageInputVo input) {
         return JsonResult.success(sysUserService.page(input));
+    }
+
+    @Operation(summary = "新增")
+    @PostMapping("/add")
+    public JsonResult<PageResult<UserPageOutputVo>> add(@Validated @RequestBody UserAddInputVo input) {
+        sysUserService.add(input);
+        return JsonResult.success();
+    }
+
+    @Operation(summary = "修改")
+    @PostMapping("/edit")
+    public JsonResult<PageResult<UserPageOutputVo>> edit(@Validated @RequestBody UserEditInputVo input) {
+        sysUserService.edit(input);
+        return JsonResult.success();
+    }
+
+    @Operation(summary = "删除")
+    @PostMapping("/delete")
+    public JsonResult<Void> delete(@Validated @RequestBody UserDeleteInputVo input) {
+        sysUserService.delete(input);
+        return JsonResult.success();
     }
 
 }
