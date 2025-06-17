@@ -1,4 +1,4 @@
-package com.unknown.supervisor.config;
+package com.unknown.supervisor.framework.config;
 
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.InnerInterceptor;

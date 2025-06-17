@@ -1,4 +1,4 @@
-package com.unknown.supervisor.config;
+package com.unknown.supervisor.framework.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

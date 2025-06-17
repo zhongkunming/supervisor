@@ -1,4 +1,4 @@
-package com.unknown.supervisor.config;
+package com.unknown.supervisor.framework.config;
 
 import com.unknown.supervisor.framework.interceptor.GlobalInterceptor;
 import jakarta.annotation.Resource;
