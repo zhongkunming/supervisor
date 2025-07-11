@@ -2,9 +2,6 @@ package com.unknown.supervisor.common;
 
 import lombok.Data;
 
-import java.text.MessageFormat;
-import java.util.Objects;
-
 /**
  * @author zhongkunming
  */
@@ -26,20 +23,18 @@ public class JsonResult<T> {
     }
 
     public static <T> JsonResult<T> success() {
-        return new JsonResult<>(ResultCodeSystem.SUCCESS);
+        return new JsonResult<>(GlobalResultCode.SUCCESS);
     }
 
     public static <T> JsonResult<T> success(T data) {
-        JsonResult<T> result = new JsonResult<>(ResultCodeSystem.SUCCESS);
+        JsonResult<T> result = new JsonResult<>(GlobalResultCode.SUCCESS);
         result.setData(data);
         return result;
     }
 
     public static <T> JsonResult<T> buildResult(ResultCode resultCode, Object... objs) {
         JsonResult<T> result = new JsonResult<>(resultCode);
-        if (Objects.nonNull(objs) && objs.length > 0) {
-            result.setMsg(MessageFormat.format(resultCode.getMsg(), objs));
-        }
+        result.setMsg(resultCode.conversionMessage(objs));
         return result;
     }
 }
