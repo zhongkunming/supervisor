@@ -1,5 +1,6 @@
 package com.unknown.supervisor;
 
+import com.tngtech.archunit.core.importer.ImportOption;
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
@@ -13,7 +14,7 @@ import static com.tngtech.archunit.library.Architectures.layeredArchitecture;
 import static com.tngtech.archunit.library.dependencies.SlicesRuleDefinition.slices;
 
 @SuppressWarnings("unused")
-@AnalyzeClasses(packages = "com.unknown.supervisor")
+@AnalyzeClasses(packages = "com.unknown.supervisor", importOptions = {ImportOption.DoNotIncludeTests.class})
 public class ArchUnitTest {
     @ArchTest
     static final ArchRule cycleRule =
@@ -25,10 +26,10 @@ public class ArchUnitTest {
     static final ArchRule controllerRule =
             classes()
                     .that().resideInAPackage("..controller..")
-                    .and().areAnnotatedWith(Tag.class)
-                    .and().areAnnotatedWith(RestController.class)
-                    .and().areAnnotatedWith(RequestMapping.class)
-                    .should().haveSimpleNameEndingWith("Controller");
+                    .should().haveSimpleNameEndingWith("Controller")
+                    .andShould().beAnnotatedWith(Tag.class)
+                    .andShould().beAnnotatedWith(RestController.class)
+                    .andShould().beAnnotatedWith(RequestMapping.class);
 
     @ArchTest
     static final ArchRule webLayerRule =
