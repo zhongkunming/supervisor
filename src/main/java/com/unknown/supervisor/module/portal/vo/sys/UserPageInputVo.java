@@ -1,4 +1,4 @@
-package com.unknown.supervisor.web.portal.vo.sys;
+package com.unknown.supervisor.module.portal.vo.sys;
 
 import com.unknown.supervisor.common.PageRequest;
 import lombok.Data;

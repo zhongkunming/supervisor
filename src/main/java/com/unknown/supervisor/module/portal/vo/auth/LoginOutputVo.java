@@ -1,4 +1,4 @@
-package com.unknown.supervisor.web.portal.vo.auth;
+package com.unknown.supervisor.module.portal.vo.auth;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;

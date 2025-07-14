@@ -77,7 +77,7 @@ public class ArchUnitTest {
     @ArchTest
     static final ArchRule portalPackageDependRule =
             noClasses()
-                    .that().resideInAPackage("com.unknown.supervisor.web.portal..")
+                    .that().resideInAPackage("com.unknown.supervisor.module.portal..")
                     .should().dependOnClassesThat()
                     .resideOutsideOfPackages(
                             "java..",
@@ -90,6 +90,6 @@ public class ArchUnitTest {
                             "org.apache.ibatis..",
                             "com.unknown.supervisor.common..",
                             "com.unknown.supervisor.core.exception..",
-                            "com.unknown.supervisor.web.portal.."
+                            "com.unknown.supervisor.module.portal.."
                     );
 }

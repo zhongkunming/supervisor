@@ -1,4 +1,4 @@
-package com.unknown.supervisor.web.portal.model;
+package com.unknown.supervisor.module.portal.model;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;

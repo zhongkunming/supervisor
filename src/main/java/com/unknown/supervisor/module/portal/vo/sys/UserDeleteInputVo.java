@@ -1,4 +1,4 @@
-package com.unknown.supervisor.web.portal.vo.sys;
+package com.unknown.supervisor.module.portal.vo.sys;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;

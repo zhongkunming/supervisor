@@ -1,12 +1,12 @@
-package com.unknown.supervisor.web.portal.service.impl;
+package com.unknown.supervisor.module.portal.service.impl;
 
 import com.unknown.supervisor.core.exception.BusinessException;
-import com.unknown.supervisor.web.portal.common.PortalResultCode;
-import com.unknown.supervisor.web.portal.mapper.SysUserMapper;
-import com.unknown.supervisor.web.portal.model.SysUser;
-import com.unknown.supervisor.web.portal.service.AuthService;
-import com.unknown.supervisor.web.portal.vo.auth.LoginInputVo;
-import com.unknown.supervisor.web.portal.vo.auth.LoginOutputVo;
+import com.unknown.supervisor.module.portal.common.PortalResultCode;
+import com.unknown.supervisor.module.portal.mapper.SysUserMapper;
+import com.unknown.supervisor.module.portal.model.SysUser;
+import com.unknown.supervisor.module.portal.service.AuthService;
+import com.unknown.supervisor.module.portal.vo.auth.LoginInputVo;
+import com.unknown.supervisor.module.portal.vo.auth.LoginOutputVo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

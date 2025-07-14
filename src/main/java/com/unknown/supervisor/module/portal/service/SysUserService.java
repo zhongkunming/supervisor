@@ -1,7 +1,7 @@
-package com.unknown.supervisor.web.portal.service;
+package com.unknown.supervisor.module.portal.service;
 
 import com.unknown.supervisor.common.PageResult;
-import com.unknown.supervisor.web.portal.vo.sys.*;
+import com.unknown.supervisor.module.portal.vo.sys.*;
 
 /**
  * @author zhongkunming

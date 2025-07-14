@@ -1,9 +1,9 @@
-package com.unknown.supervisor.web.portal.controller;
+package com.unknown.supervisor.module.portal.controller;
 
 import com.unknown.supervisor.common.JsonResult;
-import com.unknown.supervisor.web.portal.service.AuthService;
-import com.unknown.supervisor.web.portal.vo.auth.LoginInputVo;
-import com.unknown.supervisor.web.portal.vo.auth.LoginOutputVo;
+import com.unknown.supervisor.module.portal.service.AuthService;
+import com.unknown.supervisor.module.portal.vo.auth.LoginInputVo;
+import com.unknown.supervisor.module.portal.vo.auth.LoginOutputVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

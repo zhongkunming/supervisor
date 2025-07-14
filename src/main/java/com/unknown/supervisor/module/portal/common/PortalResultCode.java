@@ -1,4 +1,4 @@
-package com.unknown.supervisor.web.portal.common;
+package com.unknown.supervisor.module.portal.common;
 
 import com.unknown.supervisor.common.ResultCode;
 import lombok.AllArgsConstructor;

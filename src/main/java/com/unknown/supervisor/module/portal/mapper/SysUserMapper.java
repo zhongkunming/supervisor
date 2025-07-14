@@ -1,7 +1,7 @@
-package com.unknown.supervisor.web.portal.mapper;
+package com.unknown.supervisor.module.portal.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.unknown.supervisor.web.portal.model.SysUser;
+import com.unknown.supervisor.module.portal.model.SysUser;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
