@@ -5,14 +5,14 @@ spring:
       datasource:
         postgresql:
           driver-class-name: org.postgresql.Driver
-          url: jdbc:postgresql://192.168.10.10:15432/supervisor
+          url: jdbc:postgresql://192.168.10.10:35432/supervisor
           username: supervisor
           password: supervisor
 
   data:
     redis:
       host: 192.168.10.10
-      port: 16379
+      port: 36379
       password: redis
 
 logging:
