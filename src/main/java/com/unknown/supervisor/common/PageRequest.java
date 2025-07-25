@@ -1,6 +1,5 @@
 package com.unknown.supervisor.common;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
@@ -25,7 +24,7 @@ public abstract class PageRequest {
     @Schema(description = "页码", defaultValue = "1")
     private Long current;
 
-    public <T> IPage<T> toPage() {
+    public <T> Page<T> toPage() {
         Page<T> page = new Page<>();
         page.setMaxLimit(1000L);
         page.setSize(size);

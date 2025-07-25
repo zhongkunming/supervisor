@@ -5,5 +5,4 @@ package com.unknown.supervisor.utils;
  */
 public class JwtUtils {
 
-
 }

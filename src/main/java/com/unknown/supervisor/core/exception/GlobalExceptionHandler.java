@@ -1,6 +1,6 @@
 package com.unknown.supervisor.core.exception;
 
-import com.unknown.supervisor.common.GlobalResultCode;
+import com.unknown.supervisor.common.ApplicationResultCode;
 import com.unknown.supervisor.common.JsonResult;
 import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.validation.ConstraintViolation;
@@ -27,13 +27,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(BusinessException.class)
     public JsonResult<Void> handlerBusinessException(BusinessException e) {
-        log.error("ExceptionHandler.handlerBusinessException, ", e);
-        return JsonResult.buildResult(e.getResultCode(), e.getObjs());
-    }
-
-    @ExceptionHandler(GlobalException.class)
-    public JsonResult<Void> handlerGlobalException(GlobalException e) {
-        log.error("ExceptionHandler.handlerGlobalException, ", e);
+        log.error("handlerBusinessException, ", e);
         return JsonResult.buildResult(e.getResultCode(), e.getObjs());
     }
 
@@ -42,46 +36,44 @@ public class GlobalExceptionHandler {
         String message = e.getFieldErrors().stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.joining(", "));
-        log.error("参数校验未通过: {}", message);
-        return JsonResult.buildResult(GlobalResultCode.PARAM_VERIFICATION_FAILED, message);
+        log.error("handlerMethodValidationException, ", e);
+        return JsonResult.buildResult(ApplicationResultCode.PARAM_VERIFICATION_FAILED, message);
     }
 
     @ExceptionHandler(HandlerMethodValidationException.class)
     public JsonResult<Void> handlerHandlerMethodValidationException(HandlerMethodValidationException e) {
-        String errorMessage = e.getParameterValidationResults()
-                .stream()
+        String errorMessage = e.getParameterValidationResults().stream()
                 .flatMap(result -> result.getResolvableErrors().stream())
                 .map(MessageSourceResolvable::getDefaultMessage)
-                .collect(Collectors.joining(","));
-        log.error("ExceptionHandler.handlerHandlerMethodValidationException, ", e);
-        return JsonResult.buildResult(GlobalResultCode.PARAM_VERIFICATION_FAILED, errorMessage);
+                .collect(Collectors.joining(", "));
+        log.error("handlerHandlerMethodValidationException, ", e);
+        return JsonResult.buildResult(ApplicationResultCode.PARAM_VERIFICATION_FAILED, errorMessage);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
     public JsonResult<Void> handlerConstraintViolationException(ConstraintViolationException e) {
-        String errorMessage = e.getConstraintViolations()
-                .stream()
+        String errorMessage = e.getConstraintViolations().stream()
                 .map(ConstraintViolation::getMessage)
-                .collect(Collectors.joining(","));
-        log.error("ExceptionHandler.handlerConstraintViolationException, ", e);
-        return JsonResult.buildResult(GlobalResultCode.PARAM_VERIFICATION_FAILED, errorMessage);
+                .collect(Collectors.joining(", "));
+        log.error("handlerConstraintViolationException, ", e);
+        return JsonResult.buildResult(ApplicationResultCode.PARAM_VERIFICATION_FAILED, errorMessage);
     }
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public JsonResult<Void> handlerMissingServletRequestParameterException(MissingServletRequestParameterException e) {
-        log.error("ExceptionHandler.handlerMissingServletRequestParameterException, ", e);
-        return JsonResult.buildResult(GlobalResultCode.PARAM_VERIFICATION_FAILED);
+        log.error("handlerMissingServletRequestParameterException, ", e);
+        return JsonResult.buildResult(ApplicationResultCode.PARAM_VERIFICATION_FAILED);
     }
 
     @ExceptionHandler(NoResourceFoundException.class)
     public JsonResult<Void> handlerNoResourceFoundException(NoResourceFoundException e) {
-        log.error("ExceptionHandler.handlerNoResourceFoundException, ", e);
-        return JsonResult.buildResult(GlobalResultCode.PARAM_VERIFICATION_FAILED);
+        log.error("handlerNoResourceFoundException, ", e);
+        return JsonResult.buildResult(ApplicationResultCode.PARAM_VERIFICATION_FAILED);
     }
 
     @ExceptionHandler(Exception.class)
     public JsonResult<Void> handleException(Exception e) {
-        log.error("ExceptionHandler.handleException, ", e);
-        return JsonResult.buildResult(GlobalResultCode.SYS_ERROR);
+        log.error("handleException, ", e);
+        return JsonResult.buildResult(ApplicationResultCode.ERROR);
     }
 }

@@ -23,11 +23,11 @@ public class JsonResult<T> {
     }
 
     public static <T> JsonResult<T> success() {
-        return new JsonResult<>(GlobalResultCode.SUCCESS);
+        return new JsonResult<>(ApplicationResultCode.SUCCESS);
     }
 
     public static <T> JsonResult<T> success(T data) {
-        JsonResult<T> result = new JsonResult<>(GlobalResultCode.SUCCESS);
+        JsonResult<T> result = new JsonResult<>(ApplicationResultCode.SUCCESS);
         result.setData(data);
         return result;
     }

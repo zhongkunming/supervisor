@@ -8,12 +8,11 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public enum GlobalResultCode implements ResultCode {
+public enum ApplicationResultCode implements ResultCode {
 
     SUCCESS("0", null),
     PARAM_VERIFICATION_FAILED("80000", "参数校验未通过: {0}"),
-    ERROR("99999", null),
-    SYS_ERROR("99998", "系统异常"),
+    ERROR("99999", "系统未知异常，请联系管理员。"),
     ;
 
 
