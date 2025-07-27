@@ -1,7 +1,7 @@
 package com.unknown.supervisor.core.exception;
 
-import com.unknown.supervisor.common.ApplicationResultCode;
-import com.unknown.supervisor.common.JsonResult;
+import com.unknown.supervisor.core.common.GlobalResultCode;
+import com.unknown.supervisor.core.common.JsonResult;
 import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
@@ -37,7 +37,7 @@ public class GlobalExceptionHandler {
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.joining(", "));
         log.error("handlerMethodValidationException, ", e);
-        return JsonResult.buildResult(ApplicationResultCode.PARAM_VERIFICATION_FAILED, message);
+        return JsonResult.buildResult(GlobalResultCode.PARAM_VERIFICATION_FAILED, message);
     }
 
     @ExceptionHandler(HandlerMethodValidationException.class)
@@ -47,7 +47,7 @@ public class GlobalExceptionHandler {
                 .map(MessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.joining(", "));
         log.error("handlerHandlerMethodValidationException, ", e);
-        return JsonResult.buildResult(ApplicationResultCode.PARAM_VERIFICATION_FAILED, errorMessage);
+        return JsonResult.buildResult(GlobalResultCode.PARAM_VERIFICATION_FAILED, errorMessage);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
@@ -56,24 +56,24 @@ public class GlobalExceptionHandler {
                 .map(ConstraintViolation::getMessage)
                 .collect(Collectors.joining(", "));
         log.error("handlerConstraintViolationException, ", e);
-        return JsonResult.buildResult(ApplicationResultCode.PARAM_VERIFICATION_FAILED, errorMessage);
+        return JsonResult.buildResult(GlobalResultCode.PARAM_VERIFICATION_FAILED, errorMessage);
     }
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public JsonResult<Void> handlerMissingServletRequestParameterException(MissingServletRequestParameterException e) {
         log.error("handlerMissingServletRequestParameterException, ", e);
-        return JsonResult.buildResult(ApplicationResultCode.PARAM_VERIFICATION_FAILED);
+        return JsonResult.buildResult(GlobalResultCode.PARAM_VERIFICATION_FAILED);
     }
 
     @ExceptionHandler(NoResourceFoundException.class)
     public JsonResult<Void> handlerNoResourceFoundException(NoResourceFoundException e) {
         log.error("handlerNoResourceFoundException, ", e);
-        return JsonResult.buildResult(ApplicationResultCode.PARAM_VERIFICATION_FAILED);
+        return JsonResult.buildResult(GlobalResultCode.PARAM_VERIFICATION_FAILED);
     }
 
     @ExceptionHandler(Exception.class)
     public JsonResult<Void> handleException(Exception e) {
         log.error("handleException, ", e);
-        return JsonResult.buildResult(ApplicationResultCode.ERROR);
+        return JsonResult.buildResult(GlobalResultCode.ERROR);
     }
 }

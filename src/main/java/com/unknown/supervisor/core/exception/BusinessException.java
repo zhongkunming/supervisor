@@ -1,6 +1,6 @@
 package com.unknown.supervisor.core.exception;
 
-import com.unknown.supervisor.common.ResultCode;
+import com.unknown.supervisor.core.common.ResultCode;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 
