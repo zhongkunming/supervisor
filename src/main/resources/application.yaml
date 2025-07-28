@@ -22,3 +22,11 @@ knife4j:
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+
+# JWT配置
+app:
+  jwt:
+    secret: supervisor-jwt-secret-key-for-authentication-and-authorization
+    token-prefix: "Bearer "
+    header-name: "Authorization"
+    token-param: "token"
