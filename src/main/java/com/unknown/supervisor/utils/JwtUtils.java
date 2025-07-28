@@ -1,6 +1,8 @@
 package com.unknown.supervisor.utils;
 
 import com.unknown.supervisor.config.JwtConfig;
+import com.unknown.supervisor.core.common.GlobalResultCode;
+import com.unknown.supervisor.core.exception.BusinessException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.JwtException;
@@ -166,11 +168,12 @@ public class JwtUtils {
      * 从HttpServletRequest中获取JWT令牌
      *
      * @param request HTTP请求对象
-     * @return JWT令牌，如果未找到则返回null
+     * @return JWT令牌
+     * @throws BusinessException 如果未找到JWT令牌
      */
     public static String getTokenFromRequest(HttpServletRequest request) {
         if (request == null) {
-            return null;
+            throw new BusinessException(GlobalResultCode.JWT_TOKEN_NOT_FOUND);
         }
 
         JwtConfig config = getJwtConfig();
@@ -190,16 +193,20 @@ public class JwtUtils {
             return tokenFromParam;
         }
 
-        return null;
+        throw new BusinessException(GlobalResultCode.JWT_TOKEN_NOT_FOUND);
     }
 
     /**
      * 从当前请求上下文中获取JWT令牌
      *
-     * @return JWT令牌，如果未找到则返回null
+     * @return JWT令牌
+     * @throws BusinessException 如果未找到JWT令牌
      */
     public static String getTokenFromContext() {
         HttpServletRequest request = getCurrentRequest();
+        if (request == null) {
+            throw new BusinessException(GlobalResultCode.JWT_TOKEN_NOT_FOUND);
+        }
         return getTokenFromRequest(request);
     }
 
@@ -207,23 +214,29 @@ public class JwtUtils {
      * 从HttpServletRequest中获取操作员信息（用户主题）
      *
      * @param request HTTP请求对象
-     * @return 操作员信息，如果获取失败则返回null
+     * @return 操作员信息
+     * @throws BusinessException 如果获取失败
      */
     public static String getOperatorFromRequest(HttpServletRequest request) {
         String token = getTokenFromRequest(request);
-        if (StringUtils.isBlank(token)) {
-            return null;
+        String operator = getSubjectFromToken(token);
+        if (StringUtils.isBlank(operator)) {
+            throw new BusinessException(GlobalResultCode.JWT_OPERATOR_NOT_FOUND);
         }
-        return getSubjectFromToken(token);
+        return operator;
     }
 
     /**
      * 从当前请求上下文中获取操作员信息（用户主题）
      *
-     * @return 操作员信息，如果获取失败则返回null
+     * @return 操作员信息
+     * @throws BusinessException 如果获取失败
      */
     public static String getOperatorFromContext() {
         HttpServletRequest request = getCurrentRequest();
+        if (request == null) {
+            throw new BusinessException(GlobalResultCode.JWT_TOKEN_NOT_FOUND);
+        }
         return getOperatorFromRequest(request);
     }
 
@@ -231,28 +244,34 @@ public class JwtUtils {
      * 从HttpServletRequest中获取JWT声明
      *
      * @param request HTTP请求对象
-     * @return JWT声明，如果获取失败则返回null
+     * @return JWT声明
+     * @throws BusinessException 如果获取失败
      */
     public static Claims getClaimsFromRequest(HttpServletRequest request) {
         String token = getTokenFromRequest(request);
-        if (StringUtils.isBlank(token)) {
-            return null;
-        }
         try {
-            return getClaimsFromToken(token);
-        } catch (Exception e) {
+            Claims claims = getClaimsFromToken(token);
+            if (claims == null) {
+                throw new BusinessException(GlobalResultCode.JWT_CLAIMS_NOT_FOUND);
+            }
+            return claims;
+        } catch (JwtException | IllegalArgumentException e) {
             log.error("从请求中获取JWT声明失败: {}", e.getMessage());
-            return null;
+            throw new BusinessException(GlobalResultCode.JWT_TOKEN_INVALID);
         }
     }
 
     /**
      * 从当前请求上下文中获取JWT声明
      *
-     * @return JWT声明，如果获取失败则返回null
+     * @return JWT声明
+     * @throws BusinessException 如果获取失败
      */
     public static Claims getClaimsFromContext() {
         HttpServletRequest request = getCurrentRequest();
+        if (request == null) {
+            throw new BusinessException(GlobalResultCode.JWT_TOKEN_NOT_FOUND);
+        }
         return getClaimsFromRequest(request);
     }
 
