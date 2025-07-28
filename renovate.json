@@ -1,34 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:recommended",
-    ":semanticCommits",
-    ":dependencyDashboard"
-  ],
-  "gitIgnoredAuthors": [
-    "githubaction@githubaction.com"
-  ],
-  "platformAutomerge": true,
-  "automergeStrategy": "squash",
-  "rebaseWhen": "behind-base-branch",
-  "prConcurrentLimit": 10,
-  "dependencyDashboard": true,
-  "dependencyDashboardAutoclose": true,
-  "timezone": "Asia/Shanghai",
-  "forkProcessing": "auto",
-  "automerge": true,
-  "automergeType": "pr",
-  "commitBodyTable": true,
-  "separateMajorMinor": true,
-  "separateMinorPatch": true,
-  "packageRules": [
-    {
-      "description": "自动合并所有通过测试的补丁和次要版本更新",
-      "matchUpdateTypes": [
-        "minor",
-        "patch"
-      ],
-      "automerge": true
-    }
+    "config:recommended"
   ]
 }
