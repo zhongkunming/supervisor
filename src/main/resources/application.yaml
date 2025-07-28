@@ -1,13 +1,9 @@
 spring:
   datasource:
-    dynamic:
-      primary: postgresql
-      datasource:
-        postgresql:
-          driver-class-name: org.postgresql.Driver
-          url: jdbc:postgresql://192.168.10.10:35432/supervisor
-          username: supervisor
-          password: supervisor
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://192.168.10.10:35432/supervisor
+    username: supervisor
+    password: supervisor
 
   data:
     redis:
