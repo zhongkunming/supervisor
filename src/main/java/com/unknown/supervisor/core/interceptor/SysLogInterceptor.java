@@ -21,7 +21,7 @@ import java.nio.charset.StandardCharsets;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class GlobalInterceptor implements HandlerInterceptor {
+public class SysLogInterceptor implements HandlerInterceptor {
 
     private final SysLogService sysLogService;
 

@@ -19,7 +19,7 @@ public enum GlobalResultCode implements ResultCode {
 
     // 认证授权错误 - JWT相关（核心组件）
     JWT_TOKEN_ERROR("40101", "JWT令牌获取失败"),
-    JWT_OPERATOR_ERROR("40102", "操作员信息获取失败"),
+    JWT_OPER_NO_ERROR("40102", "操作员号获取失败"),
     JWT_CLAIMS_ERROR("40103", "JWT声明信息获取失败"),
 
     // 服务器错误 5xxxx

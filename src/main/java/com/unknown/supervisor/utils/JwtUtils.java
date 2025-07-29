@@ -219,11 +219,11 @@ public class JwtUtils {
      */
     public static String getOperNo(HttpServletRequest request) {
         String token = getToken(request);
-        String operator = getSubject(token);
-        if (StringUtils.isBlank(operator)) {
-            throw new BusinessException(GlobalResultCode.JWT_OPERATOR_ERROR);
+        String subject = getSubject(token);
+        if (StringUtils.isBlank(subject)) {
+            throw new BusinessException(GlobalResultCode.JWT_OPER_NO_ERROR);
         }
-        return operator;
+        return subject;
     }
 
     /**
