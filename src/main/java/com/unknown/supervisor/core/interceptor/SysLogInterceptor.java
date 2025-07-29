@@ -53,16 +53,15 @@ public class SysLogInterceptor implements HandlerInterceptor {
         SysLog sysLog = new SysLog();
 
         // 基本信息
-        sysLog.setRequestId((String) request.getAttribute("requestId"));
+        sysLog.setTransNo((String) request.getAttribute("requestId"));
         sysLog.setMethod(request.getMethod());
         sysLog.setUri(request.getRequestURI());
         sysLog.setQueryString(request.getQueryString());
-        sysLog.setStatusCode(response.getStatus());
 
-        // 计算持续时间
+        // 计算请求耗时
         Long startTime = (Long) request.getAttribute("startTime");
         if (startTime != null) {
-            sysLog.setDuration(System.currentTimeMillis() - startTime);
+            sysLog.setCost(System.currentTimeMillis() - startTime);
         }
 
         // 客户端信息

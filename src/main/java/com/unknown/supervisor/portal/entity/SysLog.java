@@ -20,8 +20,8 @@ public class SysLog {
     @Schema(description = "主键ID")
     private Long id;
 
-    @Schema(description = "请求ID")
-    private String requestId;
+    @Schema(description = "交易ID")
+    private String transNo;
 
     @Schema(description = "请求方法")
     private String method;
@@ -38,11 +38,8 @@ public class SysLog {
     @Schema(description = "响应体")
     private String responseBody;
 
-    @Schema(description = "状态码")
-    private Integer statusCode;
-
-    @Schema(description = "请求持续时间(毫秒)")
-    private Long duration;
+    @Schema(description = "请求耗时(毫秒)")
+    private Long cost;
 
     @Schema(description = "客户端IP")
     private String clientIp;
