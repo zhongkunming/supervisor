@@ -30,3 +30,4 @@ app:
     token-prefix: "Bearer "
     header-name: "Authorization"
     token-param: "token"
+    expire: 86400

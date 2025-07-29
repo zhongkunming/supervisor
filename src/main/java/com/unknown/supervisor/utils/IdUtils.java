@@ -141,14 +141,14 @@ public final class IdUtils {
                 this.inetAddress = InetAddress.getLocalHost();
             }
             if (log.isDebugEnabled()) {
-                log.debug("Get " + inetAddress + " network interface ");
+                log.debug("Get {} network interface ", inetAddress);
             }
             NetworkInterface network = NetworkInterface.getByInetAddress(this.inetAddress);
             if (log.isDebugEnabled()) {
-                log.debug("Get network interface info: " + network);
+                log.debug("Get network interface info: {}", network);
             }
             if (null == network) {
-                log.warn("Unable to get network interface for " + inetAddress);
+                log.warn("Unable to get network interface for {}", inetAddress);
                 id = 1L;
             } else {
                 byte[] mac = network.getHardwareAddress();
@@ -158,7 +158,7 @@ public final class IdUtils {
                 }
             }
         } catch (Exception e) {
-            log.warn(" getDatacenterId: " + e.getMessage());
+            log.warn(" getDatacenterId: {}", e.getMessage());
         }
         return id;
     }

@@ -19,6 +19,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -82,10 +83,9 @@ public class JwtUtils {
                 .issuedAt(now)
                 .signWith(getSigningKey());
 
-        if (claims != null && !claims.isEmpty()) {
-            builder.claims(claims);
-        }
-
+        if (claims == null) claims = new HashMap<>();
+        claims.put("nanoTime", System.nanoTime());
+        builder.claims(claims);
         return builder.compact();
     }
 

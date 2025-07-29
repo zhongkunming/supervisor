@@ -1,5 +1,8 @@
 package com.unknown.supervisor.portal.service.impl;
 
+import com.unknown.supervisor.config.JwtConfig;
+import com.unknown.supervisor.core.cache.CacheModule;
+import com.unknown.supervisor.core.cache.CacheService;
 import com.unknown.supervisor.core.exception.BusinessException;
 import com.unknown.supervisor.portal.common.PortalResultCode;
 import com.unknown.supervisor.portal.dto.auth.LoginInputDTO;
@@ -10,20 +13,28 @@ import com.unknown.supervisor.portal.service.SysUserService;
 import com.unknown.supervisor.utils.JwtUtils;
 import com.unknown.supervisor.utils.PasswdUtils;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+
+import java.time.Duration;
 
 @Service
 @RequiredArgsConstructor
 public class SysAuthServiceImpl implements SysAuthService {
 
+    private final JwtConfig jwtConfig;
+
     private final SysUserService sysUserService;
+
+    private final CacheService cacheService;
 
     // ========== Controller层调用的公共方法 ==========
 
     @Override
     public LoginOutputDTO login(LoginInputDTO loginInputDTO) {
         // 根据操作员编号查询用户
-        SysUserDTO user = sysUserService.getUserByOperNo(loginInputDTO.getOperNo());
+        String operNo = loginInputDTO.getOperNo();
+        SysUserDTO user = sysUserService.getUserByOperNo(operNo);
         if (user == null) {
             throw new BusinessException(PortalResultCode.USER_NOT_FOUND);
         }
@@ -40,7 +51,7 @@ public class SysAuthServiceImpl implements SysAuthService {
 
         // 生成JWT令牌
         String token = JwtUtils.generateToken(user.getOperNo());
-
+        cacheService.put(CacheModule.TOKEN, token, operNo, Duration.ofSeconds(jwtConfig.getExpire()));
         // 构建返回结果
         LoginOutputDTO loginOutputDTO = new LoginOutputDTO();
         loginOutputDTO.setToken(token);
@@ -53,7 +64,8 @@ public class SysAuthServiceImpl implements SysAuthService {
 
     @Override
     public void logout() {
-        // 这里可以实现JWT令牌的黑名单机制
-        // 目前简单实现，客户端删除token即可
+        String token = JwtUtils.getToken();
+        if (StringUtils.isBlank(token)) return;
+        cacheService.delete(CacheModule.TOKEN, token);
     }
 }
