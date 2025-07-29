@@ -1,6 +1,5 @@
 package com.unknown.supervisor.core.interceptor;
 
-import com.unknown.supervisor.portal.service.SysLogService;
 import com.unknown.supervisor.utils.JwtUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
