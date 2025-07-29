@@ -5,6 +5,8 @@ import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 
 /**
+ * 业务异常类
+ *
  * @author zhongkunming
  */
 @Getter

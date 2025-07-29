@@ -3,35 +3,37 @@ package com.unknown.supervisor.core.common;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import org.springframework.beans.BeanUtils;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
-import java.util.function.Supplier;
+import java.util.function.Function;
 
 /**
+ * 分页响应结果
+ *
  * @author zhongkunming
  */
 @Data
+@Schema(description = "分页响应结果")
 public class PageResult<R> implements Serializable {
 
     @Serial
     private static final long serialVersionUID = -8586054880473556418L;
 
-    @Schema(title = "总页数")
+    @Schema(description = "总页数", example = "10")
     private Long pages;
 
-    @Schema(title = "总条数")
+    @Schema(description = "总条数", example = "100")
     private Long total;
 
-    @Schema(title = "每页条数")
+    @Schema(description = "每页条数", example = "10")
     private Long size;
 
-    @Schema(title = "页码")
+    @Schema(description = "当前页码", example = "1")
     private Long current;
 
-    @Schema(title = "分页数据")
+    @Schema(description = "分页数据列表")
     private List<R> records;
 
     public static <R> PageResult<R> trans(IPage<R> page) {
@@ -44,18 +46,36 @@ public class PageResult<R> implements Serializable {
         return result;
     }
 
-    public static <T, R> PageResult<T> trans(IPage<R> page, Supplier<T> supplier) {
-        List<T> newList = page.getRecords().stream().map(record -> {
-            T target = supplier.get();
-            BeanUtils.copyProperties(record, target);
-            return target;
-        }).toList();
+    public static <T, R> PageResult<T> trans(PageResult<R> page, List<T> newList) {
         PageResult<T> result = new PageResult<>();
         result.setPages(page.getPages());
         result.setTotal(page.getTotal());
         result.setSize(page.getSize());
         result.setCurrent(page.getCurrent());
         result.setRecords(newList);
+        return result;
+    }
+
+    public static <T, R> PageResult<T> trans(IPage<R> page, List<T> newList) {
+        PageResult<T> result = new PageResult<>();
+        result.setPages(page.getPages());
+        result.setTotal(page.getTotal());
+        result.setSize(page.getSize());
+        result.setCurrent(page.getCurrent());
+        result.setRecords(newList);
+        return result;
+    }
+
+    public static <T, R> PageResult<T> trans(IPage<R> page, Function<R, T> function) {
+        List<T> list = page.getRecords().stream()
+                .map(function)
+                .toList();
+        PageResult<T> result = new PageResult<>();
+        result.setPages(page.getPages());
+        result.setTotal(page.getTotal());
+        result.setSize(page.getSize());
+        result.setCurrent(page.getCurrent());
+        result.setRecords(list);
         return result;
     }
 }

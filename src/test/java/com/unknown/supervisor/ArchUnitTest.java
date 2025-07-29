@@ -77,7 +77,7 @@ public class ArchUnitTest {
     @ArchTest
     static final ArchRule portalPackageDependRule =
             noClasses()
-                    .that().resideInAPackage("com.unknown.supervisor.module.portal..")
+                    .that().resideInAPackage("com.unknown.supervisor.portal..")
                     .should().dependOnClassesThat()
                     .resideOutsideOfPackages(
                             "java..",
@@ -88,8 +88,31 @@ public class ArchUnitTest {
                             "jakarta..",
                             "com.baomidou.mybatisplus..",
                             "org.apache.ibatis..",
+                            "org.apache.commons.lang3..",
                             "com.unknown.supervisor.common..",
-                            "com.unknown.supervisor.core.exception..",
-                            "com.unknown.supervisor.module.portal.."
+                            "com.unknown.supervisor.core..",
+                            "com.unknown.supervisor.utils..",
+                            "com.unknown.supervisor.portal.."
                     );
+
+    @ArchTest
+    static final ArchRule controllerOnlyUseVORule =
+            noClasses()
+                    .that().resideInAPackage("..controller..")
+                    .should().dependOnClassesThat()
+                    .resideInAPackage("..dto..");
+
+    @ArchTest
+    static final ArchRule serviceOnlyUseDTORule =
+            noClasses()
+                    .that().resideInAPackage("..service..")
+                    .should().dependOnClassesThat()
+                    .resideInAPackage("..vo..");
+
+    @ArchTest
+    static final ArchRule mapperOnlyUseDTORule =
+            noClasses()
+                    .that().resideInAPackage("..mapper..")
+                    .should().dependOnClassesThat()
+                    .resideInAPackage("..vo..");
 }

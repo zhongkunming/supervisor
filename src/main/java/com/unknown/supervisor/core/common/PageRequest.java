@@ -8,10 +8,13 @@ import lombok.Setter;
 import org.hibernate.validator.constraints.Range;
 
 /**
+ * 分页请求基类
+ *
  * @author zhongkunming
  */
 @Getter
 @Setter
+@Schema(description = "分页请求基类")
 public abstract class PageRequest {
 
     @Range(min = 1, message = "每页条数最小为1")

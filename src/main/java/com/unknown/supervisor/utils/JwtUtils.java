@@ -104,9 +104,9 @@ public class JwtUtils {
      * @param token JWT令牌
      * @return 主题
      */
-    public static String getSubjectFromToken(String token) {
+    public static String getSubject(String token) {
         try {
-            Claims claims = getClaimsFromToken(token);
+            Claims claims = getClaims(token);
             return claims.getSubject();
         } catch (Exception e) {
             log.error("获取JWT主题失败: {}", e.getMessage());
@@ -120,7 +120,7 @@ public class JwtUtils {
      * @param token JWT令牌
      * @return 声明
      */
-    public static Claims getClaimsFromToken(String token) {
+    public static Claims getClaims(String token) {
         return Jwts.parser()
                 .verifyWith(getSigningKey())
                 .build()
@@ -137,7 +137,7 @@ public class JwtUtils {
      */
     public static boolean validateToken(String token, String subject) {
         try {
-            String tokenSubject = getSubjectFromToken(token);
+            String tokenSubject = getSubject(token);
             return subject.equals(tokenSubject);
         } catch (Exception e) {
             log.error("验证JWT令牌失败: {}", e.getMessage());
@@ -171,9 +171,9 @@ public class JwtUtils {
      * @return JWT令牌
      * @throws BusinessException 如果未找到JWT令牌
      */
-    public static String getTokenFromRequest(HttpServletRequest request) {
+    public static String getToken(HttpServletRequest request) {
         if (request == null) {
-            throw new BusinessException(GlobalResultCode.JWT_TOKEN_NOT_FOUND);
+            throw new BusinessException(GlobalResultCode.JWT_TOKEN_ERROR);
         }
 
         JwtConfig config = getJwtConfig();
@@ -193,7 +193,7 @@ public class JwtUtils {
             return tokenFromParam;
         }
 
-        throw new BusinessException(GlobalResultCode.JWT_TOKEN_NOT_FOUND);
+        throw new BusinessException(GlobalResultCode.JWT_TOKEN_ERROR);
     }
 
     /**
@@ -202,12 +202,12 @@ public class JwtUtils {
      * @return JWT令牌
      * @throws BusinessException 如果未找到JWT令牌
      */
-    public static String getTokenFromContext() {
+    public static String getToken() {
         HttpServletRequest request = getCurrentRequest();
         if (request == null) {
-            throw new BusinessException(GlobalResultCode.JWT_TOKEN_NOT_FOUND);
+            throw new BusinessException(GlobalResultCode.JWT_TOKEN_ERROR);
         }
-        return getTokenFromRequest(request);
+        return getToken(request);
     }
 
     /**
@@ -217,11 +217,11 @@ public class JwtUtils {
      * @return 操作员信息
      * @throws BusinessException 如果获取失败
      */
-    public static String getOperatorFromRequest(HttpServletRequest request) {
-        String token = getTokenFromRequest(request);
-        String operator = getSubjectFromToken(token);
+    public static String getOperNo(HttpServletRequest request) {
+        String token = getToken(request);
+        String operator = getSubject(token);
         if (StringUtils.isBlank(operator)) {
-            throw new BusinessException(GlobalResultCode.JWT_OPERATOR_NOT_FOUND);
+            throw new BusinessException(GlobalResultCode.JWT_OPERATOR_ERROR);
         }
         return operator;
     }
@@ -232,12 +232,12 @@ public class JwtUtils {
      * @return 操作员信息
      * @throws BusinessException 如果获取失败
      */
-    public static String getOperatorFromContext() {
+    public static String getOperNo() {
         HttpServletRequest request = getCurrentRequest();
         if (request == null) {
-            throw new BusinessException(GlobalResultCode.JWT_TOKEN_NOT_FOUND);
+            throw new BusinessException(GlobalResultCode.JWT_TOKEN_ERROR);
         }
-        return getOperatorFromRequest(request);
+        return getOperNo(request);
     }
 
     /**
@@ -247,17 +247,17 @@ public class JwtUtils {
      * @return JWT声明
      * @throws BusinessException 如果获取失败
      */
-    public static Claims getClaimsFromRequest(HttpServletRequest request) {
-        String token = getTokenFromRequest(request);
+    public static Claims getClaims(HttpServletRequest request) {
+        String token = getToken(request);
         try {
-            Claims claims = getClaimsFromToken(token);
+            Claims claims = getClaims(token);
             if (claims == null) {
-                throw new BusinessException(GlobalResultCode.JWT_CLAIMS_NOT_FOUND);
+                throw new BusinessException(GlobalResultCode.JWT_CLAIMS_ERROR);
             }
             return claims;
         } catch (JwtException | IllegalArgumentException e) {
             log.error("从请求中获取JWT声明失败: {}", e.getMessage());
-            throw new BusinessException(GlobalResultCode.JWT_TOKEN_INVALID);
+            throw new BusinessException(GlobalResultCode.JWT_TOKEN_ERROR);
         }
     }
 
@@ -267,62 +267,12 @@ public class JwtUtils {
      * @return JWT声明
      * @throws BusinessException 如果获取失败
      */
-    public static Claims getClaimsFromContext() {
+    public static Claims getClaims() {
         HttpServletRequest request = getCurrentRequest();
         if (request == null) {
-            throw new BusinessException(GlobalResultCode.JWT_TOKEN_NOT_FOUND);
+            throw new BusinessException(GlobalResultCode.JWT_TOKEN_ERROR);
         }
-        return getClaimsFromRequest(request);
-    }
-
-    /**
-     * 验证HttpServletRequest中的JWT令牌
-     *
-     * @param request HTTP请求对象
-     * @param subject 期望的主题
-     * @return 是否有效
-     */
-    public static boolean validateTokenFromRequest(HttpServletRequest request, String subject) {
-        String token = getTokenFromRequest(request);
-        if (StringUtils.isBlank(token)) {
-            return false;
-        }
-        return validateToken(token, subject);
-    }
-
-    /**
-     * 验证HttpServletRequest中的JWT令牌格式和签名
-     *
-     * @param request HTTP请求对象
-     * @return 是否有效
-     */
-    public static boolean validateTokenFromRequest(HttpServletRequest request) {
-        String token = getTokenFromRequest(request);
-        if (StringUtils.isBlank(token)) {
-            return false;
-        }
-        return validateToken(token);
-    }
-
-    /**
-     * 验证当前请求上下文中的JWT令牌
-     *
-     * @param subject 期望的主题
-     * @return 是否有效
-     */
-    public static boolean validateTokenFromContext(String subject) {
-        HttpServletRequest request = getCurrentRequest();
-        return validateTokenFromRequest(request, subject);
-    }
-
-    /**
-     * 验证当前请求上下文中的JWT令牌格式和签名
-     *
-     * @return 是否有效
-     */
-    public static boolean validateTokenFromContext() {
-        HttpServletRequest request = getCurrentRequest();
-        return validateTokenFromRequest(request);
+        return getClaims(request);
     }
 
     /**
@@ -335,7 +285,7 @@ public class JwtUtils {
             ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
             return Objects.nonNull(attributes) ? attributes.getRequest() : null;
         } catch (Exception e) {
-            log.debug("获取当前请求上下文失败: {}", e.getMessage());
+            log.error("获取当前请求上下文失败: {}", e.getMessage());
             return null;
         }
     }
