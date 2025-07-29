@@ -7,6 +7,7 @@ import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * MyBatis Plus 字段自动填充处理器
@@ -19,22 +20,27 @@ public class MyBatisPlusMetaObjectHandler implements MetaObjectHandler {
 
     @Override
     public void insertFill(MetaObject metaObject) {
-        String operNo = getCurrentOperNo();
         LocalDateTime now = LocalDateTime.now();
-
-        this.strictInsertFill(metaObject, "createOperNo", String.class, operNo);
         this.strictInsertFill(metaObject, "createDt", LocalDateTime.class, now);
-        this.strictInsertFill(metaObject, "updateOperNo", String.class, operNo);
         this.strictInsertFill(metaObject, "updateDt", LocalDateTime.class, now);
+
+        if (Objects.isNull(this.getFieldValByName("createOperNo", metaObject)) ||
+                Objects.isNull(this.getFieldValByName("updateOperNo", metaObject))) {
+            String operNo = getCurrentOperNo();
+            this.strictInsertFill(metaObject, "createOperNo", String.class, operNo);
+            this.strictInsertFill(metaObject, "updateOperNo", String.class, operNo);
+        }
     }
 
     @Override
     public void updateFill(MetaObject metaObject) {
-        String operNo = getCurrentOperNo();
         LocalDateTime now = LocalDateTime.now();
-
-        this.strictUpdateFill(metaObject, "updateOperNo", String.class, operNo);
         this.strictUpdateFill(metaObject, "updateDt", LocalDateTime.class, now);
+
+        if (Objects.isNull(this.getFieldValByName("updateOperNo", metaObject))) {
+            String operNo = getCurrentOperNo();
+            this.strictInsertFill(metaObject, "updateOperNo", String.class, operNo);
+        }
     }
 
     /**
@@ -46,6 +52,6 @@ public class MyBatisPlusMetaObjectHandler implements MetaObjectHandler {
         } catch (Exception e) {
             log.error("获取当前操作员号失败，使用默认值。失败原因: {}", e.getMessage());
         }
-        return "system";
+        return "anno";
     }
 }

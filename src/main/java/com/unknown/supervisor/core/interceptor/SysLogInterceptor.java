@@ -8,12 +8,15 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 
+import java.net.InetAddress;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 /**
  * @author zhongkunming
@@ -23,6 +26,7 @@ import java.nio.charset.StandardCharsets;
 @RequiredArgsConstructor
 public class SysLogInterceptor implements HandlerInterceptor {
 
+    private static volatile String serverIp;
     private final SysLogService sysLogService;
 
     @Override
@@ -63,13 +67,15 @@ public class SysLogInterceptor implements HandlerInterceptor {
 
         // 客户端信息
         sysLog.setClientIp(getClientIp(request));
-        sysLog.setServerIp(getServerIp(request));
+        sysLog.setServerIp(getServerIp());
         sysLog.setUserAgent(request.getHeader("User-Agent"));
 
         // 操作员信息
         try {
             String operNo = JwtUtils.getOperNo(request);
             sysLog.setOperNo(operNo);
+            sysLog.setCreateOperNo(operNo);
+            sysLog.setUpdateOperNo(operNo);
         } catch (Exception e) {
             // 忽略JWT获取失败的情况
         }
@@ -77,24 +83,20 @@ public class SysLogInterceptor implements HandlerInterceptor {
         // 请求体和响应体
         if (request instanceof ContentCachingRequestWrapper wrapper) {
             byte[] content = wrapper.getContentAsByteArray();
-            if (content.length > 0) {
+            String contentType = wrapper.getContentType();
+            if (content.length > 0 &&
+                    !Strings.CS.containsAny(contentType, "multipart", "stream")) {
                 String requestBody = new String(content, StandardCharsets.UTF_8);
-                // 限制请求体长度
-                if (requestBody.length() > 5000) {
-                    requestBody = requestBody.substring(0, 5000) + "...";
-                }
                 sysLog.setRequestBody(requestBody);
             }
         }
 
         if (response instanceof ContentCachingResponseWrapper wrapper) {
             byte[] content = wrapper.getContentAsByteArray();
-            if (content.length > 0) {
+            String contentType = wrapper.getContentType();
+            if (content.length > 0 &&
+                    !Strings.CS.containsAny(contentType, "multipart", "stream")) {
                 String responseBody = new String(content, StandardCharsets.UTF_8);
-                // 限制响应体长度
-                if (responseBody.length() > 5000) {
-                    responseBody = responseBody.substring(0, 5000) + "...";
-                }
                 sysLog.setResponseBody(responseBody);
             }
         }
@@ -127,8 +129,18 @@ public class SysLogInterceptor implements HandlerInterceptor {
     /**
      * 获取服务器IP
      */
-    private String getServerIp(HttpServletRequest request) {
-        return request.getLocalAddr();
-    }
+    private String getServerIp() {
+        if (Objects.nonNull(serverIp)) return serverIp;
 
+        synchronized (SysLogInterceptor.class) {
+            if (Objects.nonNull(serverIp)) return serverIp;
+            try {
+                serverIp = InetAddress.getLocalHost().getHostAddress();
+            } catch (Exception e) {
+                log.warn("获取服务器IP失败，使用默认IP", e);
+                serverIp = "127.0.0.1";
+            }
+            return serverIp;
+        }
+    }
 }

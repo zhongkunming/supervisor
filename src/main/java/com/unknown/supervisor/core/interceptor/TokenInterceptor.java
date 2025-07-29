@@ -19,6 +19,7 @@ public class TokenInterceptor implements HandlerInterceptor {
     @SuppressWarnings("NullableProblems")
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         String token = JwtUtils.getToken(request);
+
         boolean flag = JwtUtils.validateToken(token);
         if (flag) {
             // todo 验证token有效性

@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -129,23 +130,6 @@ public class JwtUtils {
     }
 
     /**
-     * 验证JWT令牌
-     *
-     * @param token   JWT令牌
-     * @param subject 期望的主题
-     * @return 是否有效
-     */
-    public static boolean validateToken(String token, String subject) {
-        try {
-            String tokenSubject = getSubject(token);
-            return subject.equals(tokenSubject);
-        } catch (Exception e) {
-            log.error("验证JWT令牌失败: {}", e.getMessage());
-            return false;
-        }
-    }
-
-    /**
      * 验证JWT令牌格式和签名
      *
      * @param token JWT令牌
@@ -182,15 +166,15 @@ public class JwtUtils {
         String tokenParam = config.getTokenParam();
 
         // 首先尝试从请求头获取
-        String authHeader = request.getHeader(headerName);
-        if (StringUtils.isNotBlank(authHeader) && authHeader.startsWith(tokenPrefix)) {
-            return authHeader.substring(tokenPrefix.length()).trim();
+        String token = request.getHeader(headerName);
+        if (StringUtils.isNotBlank(token) && token.startsWith(tokenPrefix)) {
+            return Strings.CS.removeStart(token, tokenPrefix);
         }
 
         // 如果请求头中没有，尝试从请求参数获取
-        String tokenFromParam = request.getParameter(tokenParam);
-        if (StringUtils.isNotBlank(tokenFromParam)) {
-            return tokenFromParam;
+        token = request.getParameter(tokenParam);
+        if (StringUtils.isNotBlank(token)) {
+            return token;
         }
 
         throw new BusinessException(GlobalResultCode.JWT_TOKEN_ERROR);
@@ -238,41 +222,6 @@ public class JwtUtils {
             throw new BusinessException(GlobalResultCode.JWT_TOKEN_ERROR);
         }
         return getOperNo(request);
-    }
-
-    /**
-     * 从HttpServletRequest中获取JWT声明
-     *
-     * @param request HTTP请求对象
-     * @return JWT声明
-     * @throws BusinessException 如果获取失败
-     */
-    public static Claims getClaims(HttpServletRequest request) {
-        String token = getToken(request);
-        try {
-            Claims claims = getClaims(token);
-            if (claims == null) {
-                throw new BusinessException(GlobalResultCode.JWT_CLAIMS_ERROR);
-            }
-            return claims;
-        } catch (JwtException | IllegalArgumentException e) {
-            log.error("从请求中获取JWT声明失败: {}", e.getMessage());
-            throw new BusinessException(GlobalResultCode.JWT_TOKEN_ERROR);
-        }
-    }
-
-    /**
-     * 从当前请求上下文中获取JWT声明
-     *
-     * @return JWT声明
-     * @throws BusinessException 如果获取失败
-     */
-    public static Claims getClaims() {
-        HttpServletRequest request = getCurrentRequest();
-        if (request == null) {
-            throw new BusinessException(GlobalResultCode.JWT_TOKEN_ERROR);
-        }
-        return getClaims(request);
     }
 
     /**
