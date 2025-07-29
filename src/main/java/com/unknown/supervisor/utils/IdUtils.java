@@ -32,8 +32,8 @@ public final class IdUtils {
     /**
      * 机器标识位数
      */
-    private static final long WORKER_ID_BITS = 16L;
-    private static final long DATACENTER_ID_BITS = 16L;
+    private static final long WORKER_ID_BITS = 1L;
+    private static final long DATACENTER_ID_BITS = 1L;
     private static final long MAX_WORKER_ID = ~(-1L << WORKER_ID_BITS);
     private static final long MAX_DATACENTER_ID = ~(-1L << DATACENTER_ID_BITS);
 

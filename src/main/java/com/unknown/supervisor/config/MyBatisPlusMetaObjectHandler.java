@@ -44,7 +44,7 @@ public class MyBatisPlusMetaObjectHandler implements MetaObjectHandler {
         try {
             return JwtUtils.getOperNo();
         } catch (Exception e) {
-            log.error("获取当前操作员编号失败，使用默认值: {}", e.getMessage());
+            log.error("获取当前操作员号失败，使用默认值。失败原因: {}", e.getMessage());
         }
         return "system";
     }

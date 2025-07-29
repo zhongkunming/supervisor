@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @Schema(description = "系统日志")
 public class SysLog {
 
-    @TableId(type = IdType.INPUT)
+    @TableId(type = IdType.NONE)
     @Schema(description = "主键ID")
     private Long id;
 

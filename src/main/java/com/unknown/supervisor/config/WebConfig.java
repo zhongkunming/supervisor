@@ -46,6 +46,7 @@ public class WebConfig implements WebMvcConfigurer {
     private final List<String> ignoreTokenUri = new ArrayList<>() {
         {
             addAll(publicIgnoreUri);
+            add("/sys/auth/login");
         }
     };
 

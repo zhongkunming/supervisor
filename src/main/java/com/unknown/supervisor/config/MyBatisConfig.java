@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
-import com.unknown.supervisor.utils.IdUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +16,8 @@ import org.springframework.context.annotation.Configuration;
 public class MyBatisConfig {
 
     private final MyBatisPlusMetaObjectHandler metaObjectHandler;
+
+    private final IdentifierGenerator identifierGenerator;
 
     /**
      * MyBatis Plus 拦截器
@@ -38,21 +39,7 @@ public class MyBatisConfig {
         // 设置字段自动填充处理器
         globalConfig.setMetaObjectHandler(metaObjectHandler);
         // 设置ID生成器
-        globalConfig.setIdentifierGenerator(identifierGenerator());
+        globalConfig.setIdentifierGenerator(identifierGenerator);
         return globalConfig;
-    }
-
-    private IdentifierGenerator identifierGenerator() {
-        return new IdentifierGenerator() {
-            @Override
-            public Number nextId(Object entity) {
-                return IdUtils.nextId();
-            }
-
-            @Override
-            public String nextUUID(Object entity) {
-                return String.valueOf(nextId(entity));
-            }
-        };
     }
 }
