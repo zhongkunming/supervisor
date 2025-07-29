@@ -18,9 +18,9 @@ public enum GlobalResultCode implements ResultCode {
     RESOURCE_NOT_FOUND("40002", "请求的资源不存在"),
 
     // 认证授权错误 - JWT相关（核心组件）
-    JWT_TOKEN_ERROR("40101", "JWT令牌获取失败"),
+    JWT_TOKEN_ERROR("40101", "Token获取失败"),
     JWT_OPER_NO_ERROR("40102", "操作员号获取失败"),
-    JWT_CLAIMS_ERROR("40103", "JWT声明信息获取失败"),
+    JWT_CLAIMS_ERROR("40103", "声明信息获取失败"),
 
     // 服务器错误 5xxxx
     ERROR("50000", "系统内部错误，请联系管理员"),
