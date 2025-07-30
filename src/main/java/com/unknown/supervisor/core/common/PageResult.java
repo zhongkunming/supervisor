@@ -46,16 +46,6 @@ public class PageResult<R> implements Serializable {
         return result;
     }
 
-    public static <T, R> PageResult<T> trans(PageResult<R> page, List<T> newList) {
-        PageResult<T> result = new PageResult<>();
-        result.setPages(page.getPages());
-        result.setTotal(page.getTotal());
-        result.setSize(page.getSize());
-        result.setCurrent(page.getCurrent());
-        result.setRecords(newList);
-        return result;
-    }
-
     public static <T, R> PageResult<T> trans(IPage<R> page, List<T> newList) {
         PageResult<T> result = new PageResult<>();
         result.setPages(page.getPages());
@@ -76,6 +66,16 @@ public class PageResult<R> implements Serializable {
         result.setSize(page.getSize());
         result.setCurrent(page.getCurrent());
         result.setRecords(list);
+        return result;
+    }
+
+    public static <T, R> PageResult<T> trans(PageResult<R> page, List<T> newList) {
+        PageResult<T> result = new PageResult<>();
+        result.setPages(page.getPages());
+        result.setTotal(page.getTotal());
+        result.setSize(page.getSize());
+        result.setCurrent(page.getCurrent());
+        result.setRecords(newList);
         return result;
     }
 }

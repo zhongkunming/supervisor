@@ -15,19 +15,19 @@ import lombok.Data;
 @Schema(description = "系统用户创建输入信息")
 public class SysUserCreateInputVO {
 
-    @Schema(description = "操作员编号")
+    @Schema(description = "操作员编号", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotBlank(message = "操作员编号不能为空")
     private String operNo;
 
-    @Schema(description = "用户名")
+    @Schema(description = "用户名", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotBlank(message = "用户名不能为空")
     private String username;
 
-    @Schema(description = "密码")
+    @Schema(description = "密码", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotBlank(message = "密码不能为空")
     private String password;
 
-    @Schema(description = "真实姓名")
+    @Schema(description = "真实姓名", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotBlank(message = "真实姓名不能为空")
     private String realName;
 
@@ -38,7 +38,7 @@ public class SysUserCreateInputVO {
     @Schema(description = "电话")
     private String phone;
 
-    @Schema(description = "状态（1-启用，0-禁用）")
+    @Schema(description = "状态（1-启用，0-禁用）", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull(message = "状态不能为空")
     private Integer status;
 }

@@ -6,13 +6,13 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 /**
- * 系统用户实体类
+ * 系统菜单实体类
  *
  * @author zhongkunming
  */
 @Data
-@TableName("sys_user")
-public class SysUser {
+@TableName("sys_menu")
+public class SysMenu {
 
     /**
      * 主键ID
@@ -21,39 +21,64 @@ public class SysUser {
     private Long id;
 
     /**
-     * 操作员编号
+     * 菜单编码
      */
-    private String operNo;
+    private String menuCode;
 
     /**
-     * 用户名
+     * 菜单名称
      */
-    private String username;
+    private String menuName;
 
     /**
-     * 密码
+     * 父菜单ID
      */
-    private String password;
+    private Long pid;
 
     /**
-     * 真实姓名
+     * 菜单类型 1-目录 2-菜单 3-按钮
      */
-    private String realName;
+    private Integer menuType;
 
     /**
-     * 邮箱
+     * 菜单路径
      */
-    private String email;
+    private String menuPath;
 
     /**
-     * 电话
+     * 菜单组件
      */
-    private String phone;
+    private String component;
+
+    /**
+     * 菜单图标
+     */
+    private String icon;
+
+    /**
+     * 权限标识
+     */
+    private String permission;
 
     /**
      * 状态 1-启用 0-禁用
      */
     private Integer status;
+
+    /**
+     * 排序
+     */
+    private Integer sortOrder;
+
+    /**
+     * 是否可见 1-可见 0-隐藏
+     */
+    private Integer visible;
+
+    /**
+     * 是否外链 1-是 0-否
+     */
+    private Integer isExternal;
 
     /**
      * 创建操作员编号

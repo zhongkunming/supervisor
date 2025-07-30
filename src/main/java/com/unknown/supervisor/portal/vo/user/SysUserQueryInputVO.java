@@ -15,23 +15,15 @@ import lombok.EqualsAndHashCode;
 @Schema(description = "系统用户查询输入信息")
 public class SysUserQueryInputVO extends PageRequest {
 
-    /**
-     * 操作员编号
-     */
+    @Schema(description = "操作员编号")
     private String operNo;
 
-    /**
-     * 用户名
-     */
+    @Schema(description = "用户名")
     private String username;
 
-    /**
-     * 真实姓名
-     */
+    @Schema(description = "真实姓名")
     private String realName;
 
-    /**
-     * 状态（1-启用，0-禁用）
-     */
+    @Schema(description = "状态（1-启用，0-禁用）")
     private Integer status;
 }

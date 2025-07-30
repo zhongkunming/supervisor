@@ -1,18 +1,18 @@
 package com.unknown.supervisor.portal.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.unknown.supervisor.core.common.PageResult;
 import com.unknown.supervisor.core.exception.BusinessException;
 import com.unknown.supervisor.portal.common.PortalResultCode;
-import com.unknown.supervisor.portal.dto.user.SysUserCreateInputDTO;
 import com.unknown.supervisor.portal.dto.user.SysUserDTO;
-import com.unknown.supervisor.portal.dto.user.SysUserQueryInputDTO;
-import com.unknown.supervisor.portal.dto.user.SysUserUpdateInputDTO;
 import com.unknown.supervisor.portal.entity.SysUser;
 import com.unknown.supervisor.portal.mapper.SysUserMapper;
 import com.unknown.supervisor.portal.service.SysUserService;
+import com.unknown.supervisor.portal.vo.user.SysUserCreateInputVO;
+import com.unknown.supervisor.portal.vo.user.SysUserQueryInputVO;
+import com.unknown.supervisor.portal.vo.user.SysUserUpdateInputVO;
+import com.unknown.supervisor.portal.vo.user.SysUserVO;
 import com.unknown.supervisor.utils.BeanUtils;
 import com.unknown.supervisor.utils.PasswdUtils;
 import lombok.RequiredArgsConstructor;
@@ -29,79 +29,72 @@ public class SysUserServiceImpl implements SysUserService {
     // ========== Controller层调用的公共方法 ==========
 
     @Override
-    public PageResult<SysUserDTO> pageUsers(SysUserQueryInputDTO pageDTO) {
-        Page<SysUser> page = pageDTO.toPage();
+    public PageResult<SysUserVO> pageUsers(SysUserQueryInputVO queryInputVO) {
+        Page<SysUser> page = queryInputVO.toPage();
 
         LambdaQueryWrapper<SysUser> wrapper = new LambdaQueryWrapper<>();
-        if (StringUtils.isNotBlank(pageDTO.getOperNo())) {
-            wrapper.like(SysUser::getOperNo, pageDTO.getOperNo());
-        }
-        if (StringUtils.isNotBlank(pageDTO.getUsername())) {
-            wrapper.like(SysUser::getUsername, pageDTO.getUsername());
-        }
-        if (StringUtils.isNotBlank(pageDTO.getRealName())) {
-            wrapper.like(SysUser::getRealName, pageDTO.getRealName());
-        }
-        if (pageDTO.getStatus() != null) {
-            wrapper.eq(SysUser::getStatus, pageDTO.getStatus());
-        }
+        wrapper.like(StringUtils.isNotBlank(queryInputVO.getOperNo()), SysUser::getOperNo, queryInputVO.getOperNo())
+                .like(StringUtils.isNotBlank(queryInputVO.getUsername()), SysUser::getUsername, queryInputVO.getUsername())
+                .like(StringUtils.isNotBlank(queryInputVO.getRealName()), SysUser::getRealName, queryInputVO.getRealName())
+                .eq(queryInputVO.getStatus() != null, SysUser::getStatus, queryInputVO.getStatus());
 
-        IPage<SysUser> userPage = sysUserMapper.selectPage(page, wrapper);
-        return PageResult.trans(userPage, this::convertToDTO);
+        sysUserMapper.selectPage(page, wrapper);
+        return PageResult.trans(page, this::convertToVO);
     }
 
     @Override
-    public SysUserDTO getUserById(Long id) {
+    public SysUserVO getUserById(Long id) {
         SysUser user = sysUserMapper.selectById(id);
-        if (user == null) {
-            return null;
-        }
-        return convertToDTO(user);
+        if (user == null)
+            throw new BusinessException(PortalResultCode.USER_NOT_FOUND);
+
+        return convertToVO(user);
     }
 
     @Override
-    public void createUser(SysUserCreateInputDTO createDTO) {
+    public void createUser(SysUserCreateInputVO createInputVO) {
         // 检查操作员编号是否已存在
-        if (getUserByOperNo(createDTO.getOperNo()) != null) {
+        if (getUserByOperNo(createInputVO.getOperNo()) != null) {
             throw new BusinessException(PortalResultCode.USER_ALREADY_EXISTS, "操作员编号已存在");
         }
 
         // 检查用户名是否已存在
-        if (getUserByUsername(createDTO.getUsername()) != null) {
+        if (getUserByUsername(createInputVO.getUsername()) != null) {
             throw new BusinessException(PortalResultCode.USER_ALREADY_EXISTS, "用户名已存在");
         }
 
         SysUser user = new SysUser();
-        BeanUtils.copyProperties(createDTO, user);
+        BeanUtils.copyProperties(createInputVO, user);
         // 加密密码
-        user.setPassword(DigestUtils.md5DigestAsHex(createDTO.getPassword().getBytes()));
+        user.setPassword(DigestUtils.md5DigestAsHex(createInputVO.getPassword().getBytes()));
 
         sysUserMapper.insert(user);
     }
 
     @Override
-    public void updateUser(SysUserUpdateInputDTO updateDTO) {
-        SysUser existingUser = sysUserMapper.selectById(updateDTO.getId());
+    public void updateUser(SysUserUpdateInputVO updateInputVO) {
+        // VO转DTO
+        SysUser existingUser = sysUserMapper.selectById(updateInputVO.getId());
         if (existingUser == null) {
             throw new BusinessException(PortalResultCode.USER_NOT_FOUND);
         }
 
         // 检查用户名是否已被其他用户使用
-        if (StringUtils.isNotBlank(updateDTO.getUsername())) {
+        if (StringUtils.isNotBlank(updateInputVO.getUsername())) {
             LambdaQueryWrapper<SysUser> wrapper = new LambdaQueryWrapper<>();
-            wrapper.eq(SysUser::getUsername, updateDTO.getUsername())
-                    .ne(SysUser::getId, updateDTO.getId());
+            wrapper.eq(SysUser::getUsername, updateInputVO.getUsername())
+                    .ne(SysUser::getId, updateInputVO.getId());
             if (sysUserMapper.selectCount(wrapper) > 0) {
                 throw new BusinessException(PortalResultCode.USER_ALREADY_EXISTS);
             }
         }
 
         SysUser user = new SysUser();
-        BeanUtils.copyProperties(updateDTO, user);
+        BeanUtils.copyProperties(updateInputVO, user);
 
         // 如果有密码更新，进行加密
-        if (StringUtils.isNotBlank(updateDTO.getPassword())) {
-            user.setPassword(PasswdUtils.encryptPassword(updateDTO.getPassword()));
+        if (StringUtils.isNotBlank(updateInputVO.getPassword())) {
+            user.setPassword(PasswdUtils.encryptPassword(updateInputVO.getPassword()));
         }
 
         sysUserMapper.updateById(user);
@@ -149,7 +142,13 @@ public class SysUserServiceImpl implements SysUserService {
         return convertToDTO(user);
     }
 
-    private SysUserDTO convertToDTO(SysUser user) {
-        return BeanUtils.copyProperties(user, SysUserDTO::new);
+    private SysUserDTO convertToDTO(SysUser entity) {
+        return BeanUtils.copyProperties(entity, SysUserDTO::new);
+    }
+
+    private SysUserVO convertToVO(SysUser entity) {
+        SysUserVO vo = BeanUtils.copyProperties(entity, SysUserVO::new);
+        vo.setStatusName(entity.getStatus() == 1 ? "启用" : "禁用");
+        return vo;
     }
 }

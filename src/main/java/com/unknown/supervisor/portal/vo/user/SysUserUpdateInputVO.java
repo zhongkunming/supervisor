@@ -14,7 +14,7 @@ import lombok.Data;
 @Schema(description = "系统用户更新输入信息")
 public class SysUserUpdateInputVO {
 
-    @Schema(description = "主键ID")
+    @Schema(description = "主键ID", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull(message = "用户ID不能为空")
     private Long id;
 

@@ -6,13 +6,13 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 /**
- * 系统用户实体类
+ * 系统角色实体类
  *
  * @author zhongkunming
  */
 @Data
-@TableName("sys_user")
-public class SysUser {
+@TableName("sys_role")
+public class SysRole {
 
     /**
      * 主键ID
@@ -21,39 +21,29 @@ public class SysUser {
     private Long id;
 
     /**
-     * 操作员编号
+     * 角色编码
      */
-    private String operNo;
+    private String roleCode;
 
     /**
-     * 用户名
+     * 角色名称
      */
-    private String username;
+    private String roleName;
 
     /**
-     * 密码
+     * 角色描述
      */
-    private String password;
-
-    /**
-     * 真实姓名
-     */
-    private String realName;
-
-    /**
-     * 邮箱
-     */
-    private String email;
-
-    /**
-     * 电话
-     */
-    private String phone;
+    private String roleDesc;
 
     /**
      * 状态 1-启用 0-禁用
      */
     private Integer status;
+
+    /**
+     * 排序
+     */
+    private Integer sortOrder;
 
     /**
      * 创建操作员编号

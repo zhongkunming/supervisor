@@ -1,10 +1,11 @@
 package com.unknown.supervisor.portal.service;
 
 import com.unknown.supervisor.core.common.PageResult;
-import com.unknown.supervisor.portal.dto.user.SysUserCreateInputDTO;
 import com.unknown.supervisor.portal.dto.user.SysUserDTO;
-import com.unknown.supervisor.portal.dto.user.SysUserQueryInputDTO;
-import com.unknown.supervisor.portal.dto.user.SysUserUpdateInputDTO;
+import com.unknown.supervisor.portal.vo.user.SysUserCreateInputVO;
+import com.unknown.supervisor.portal.vo.user.SysUserQueryInputVO;
+import com.unknown.supervisor.portal.vo.user.SysUserUpdateInputVO;
+import com.unknown.supervisor.portal.vo.user.SysUserVO;
 
 public interface SysUserService {
 
@@ -13,22 +14,22 @@ public interface SysUserService {
     /**
      * 分页查询用户
      */
-    PageResult<SysUserDTO> pageUsers(SysUserQueryInputDTO pageDTO);
+    PageResult<SysUserVO> pageUsers(SysUserQueryInputVO queryInputVO);
 
     /**
      * 根据ID查询用户
      */
-    SysUserDTO getUserById(Long id);
+    SysUserVO getUserById(Long id);
 
     /**
      * 创建用户
      */
-    void createUser(SysUserCreateInputDTO createDTO);
+    void createUser(SysUserCreateInputVO createInputVO);
 
     /**
      * 更新用户
      */
-    void updateUser(SysUserUpdateInputDTO updateDTO);
+    void updateUser(SysUserUpdateInputVO updateInputVO);
 
     /**
      * 删除用户

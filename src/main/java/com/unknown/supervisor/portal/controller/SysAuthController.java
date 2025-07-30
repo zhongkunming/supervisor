@@ -1,12 +1,9 @@
 package com.unknown.supervisor.portal.controller;
 
 import com.unknown.supervisor.core.common.JsonResult;
-import com.unknown.supervisor.portal.dto.auth.LoginInputDTO;
-import com.unknown.supervisor.portal.dto.auth.LoginOutputDTO;
 import com.unknown.supervisor.portal.service.SysAuthService;
 import com.unknown.supervisor.portal.vo.auth.LoginInputVO;
 import com.unknown.supervisor.portal.vo.auth.LoginOutputVO;
-import com.unknown.supervisor.utils.BeanUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -27,12 +24,7 @@ public class SysAuthController {
     @Operation(summary = "用户登录")
     @PostMapping("/login")
     public JsonResult<LoginOutputVO> login(@Valid @RequestBody LoginInputVO loginInputVO) {
-        // VO转DTO
-        LoginInputDTO loginInputDTO = BeanUtils.copyProperties(loginInputVO, LoginInputDTO::new);
-        LoginOutputDTO loginOutputDTO = sysAuthService.login(loginInputDTO);
-
-        // DTO转VO
-        LoginOutputVO loginOutputVO = BeanUtils.copyProperties(loginOutputDTO, LoginOutputVO::new);
+        LoginOutputVO loginOutputVO = sysAuthService.login(loginInputVO);
         return JsonResult.success(loginOutputVO);
     }
 

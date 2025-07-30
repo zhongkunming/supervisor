@@ -29,10 +29,14 @@ public class GlobalRequestFilter extends OncePerRequestFilter {
     @SuppressWarnings("NullableProblems")
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         // 生成请求ID
-        request.setAttribute(TRANS_NO, IdUtils.nextIdStr());
+        String transNo = IdUtils.nextIdStr();
+        String uri = request.getRequestURI();
+        log.info("uri: {}, transNo: {}", uri, transNo);
+        request.setAttribute(TRANS_NO, transNo);
 
         // 设置请求开始时间
-        request.setAttribute(START_TIME, System.currentTimeMillis());
+        long startTime = System.currentTimeMillis();
+        request.setAttribute(START_TIME, startTime);
 
         // 包装请求和响应对象以便读取请求体和响应体
         ContentCachingRequestWrapper wrappedRequest = new ContentCachingRequestWrapper(request);
@@ -41,6 +45,10 @@ public class GlobalRequestFilter extends OncePerRequestFilter {
         try {
             chain.doFilter(wrappedRequest, wrappedResponse);
         } finally {
+            // 记录请求完成信息，包括响应状态和处理时间
+            long duration = System.currentTimeMillis() - startTime;
+            log.info("uri: {}, transNo: {}, duration: {}ms", uri, transNo, duration);
+
             // 复制响应内容到原始响应
             wrappedResponse.copyBodyToResponse();
         }
