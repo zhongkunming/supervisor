@@ -83,4 +83,18 @@ public class SysRoleController {
         List<SysRoleVO> roleVOList = sysRoleService.listEnabledRoles();
         return JsonResult.success(roleVOList);
     }
+
+    @Operation(summary = "分配用户角色")
+    @PostMapping("/assign-user-roles")
+    public JsonResult<Void> assignUserRoles(@Valid @RequestBody SysUserRoleAssignInputVO assignInputVO) {
+        sysRoleService.assignUserRoles(assignInputVO);
+        return JsonResult.success();
+    }
+
+    @Operation(summary = "查询用户角色")
+    @PostMapping("/user-roles")
+    public JsonResult<List<SysUserRoleQueryOutputVO>> getUserRoles(@Valid @RequestBody SysUserRoleQueryInputVO queryInputVO) {
+        List<SysUserRoleQueryOutputVO> userRoles = sysRoleService.getUserRoles(queryInputVO);
+        return JsonResult.success(userRoles);
+    }
 }

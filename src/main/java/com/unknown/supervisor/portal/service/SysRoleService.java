@@ -74,6 +74,21 @@ public interface SysRoleService {
      */
     List<SysRoleVO> listEnabledRoles();
 
+    /**
+     * 分配用户角色
+     *
+     * @param assignInputVO 分配参数
+     */
+    void assignUserRoles(SysUserRoleAssignInputVO assignInputVO);
+
+    /**
+     * 查询用户角色列表
+     *
+     * @param queryInputVO 查询参数
+     * @return 用户角色列表
+     */
+    List<SysUserRoleQueryOutputVO> getUserRoles(SysUserRoleQueryInputVO queryInputVO);
+
     // ========== Service层内部调用的方法 ==========
 
     /**

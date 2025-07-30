@@ -6,10 +6,13 @@ import com.unknown.supervisor.core.common.PageResult;
 import com.unknown.supervisor.core.exception.BusinessException;
 import com.unknown.supervisor.portal.common.PortalResultCode;
 import com.unknown.supervisor.portal.dto.role.SysRoleDTO;
+import com.unknown.supervisor.portal.dto.role.SysUserRoleQueryDTO;
 import com.unknown.supervisor.portal.entity.SysRole;
 import com.unknown.supervisor.portal.entity.SysRoleMenu;
+import com.unknown.supervisor.portal.entity.SysUserRole;
 import com.unknown.supervisor.portal.mapper.SysRoleMapper;
 import com.unknown.supervisor.portal.mapper.SysRoleMenuMapper;
+import com.unknown.supervisor.portal.mapper.SysUserRoleMapper;
 import com.unknown.supervisor.portal.service.SysRoleService;
 import com.unknown.supervisor.portal.vo.role.*;
 import com.unknown.supervisor.utils.BeanUtils;
@@ -33,6 +36,7 @@ public class SysRoleServiceImpl implements SysRoleService {
 
     private final SysRoleMapper sysRoleMapper;
     private final SysRoleMenuMapper sysRoleMenuMapper;
+    private final SysUserRoleMapper sysUserRoleMapper;
 
     // ========== Controller层调用的公共方法 ==========
 
@@ -130,7 +134,7 @@ public class SysRoleServiceImpl implements SysRoleService {
                     })
                     .toList();
 
-            sysRoleMenuMapper.insert(roleMenuList);
+            roleMenuList.forEach(sysRoleMenuMapper::insert);
         }
     }
 
@@ -148,6 +152,35 @@ public class SysRoleServiceImpl implements SysRoleService {
         List<SysRole> entityList = sysRoleMapper.selectList(wrapper);
         return entityList.stream()
                 .map(this::convertToVO)
+                .toList();
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void assignUserRoles(SysUserRoleAssignInputVO assignInputVO) {
+        // 删除原有的用户角色关联关系
+        sysUserRoleMapper.deleteByOperNo(assignInputVO.getOperNo());
+
+        // 插入新的用户角色关联关系
+        if (CollectionUtils.isNotEmpty(assignInputVO.getRoleCodes())) {
+            List<SysUserRole> userRoleList = assignInputVO.getRoleCodes().stream()
+                    .map(roleCode -> {
+                        SysUserRole userRole = new SysUserRole();
+                        userRole.setOperNo(assignInputVO.getOperNo());
+                        userRole.setRoleCode(roleCode);
+                        return userRole;
+                    })
+                    .toList();
+            sysUserRoleMapper.insert(userRoleList);
+        }
+    }
+
+    @Override
+    public List<SysUserRoleQueryOutputVO> getUserRoles(SysUserRoleQueryInputVO queryInputVO) {
+        List<SysUserRoleQueryDTO> dtoList = sysUserRoleMapper.selectUserRoleList(queryInputVO.getOperNo());
+
+        return dtoList.stream()
+                .map(dto -> BeanUtils.copyProperties(dto, SysUserRoleQueryOutputVO::new))
                 .toList();
     }
 
