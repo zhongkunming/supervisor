@@ -3,5 +3,13 @@
   "extends": [
     "config:recommended",
     ":disableRateLimiting"
+  ],
+  "packageRules": [
+    {
+      "matchPackageNames": [
+        "com.alibaba:fastjson2"
+      ],
+      "allowedVersions": "!/android/"
+    }
   ]
 }
