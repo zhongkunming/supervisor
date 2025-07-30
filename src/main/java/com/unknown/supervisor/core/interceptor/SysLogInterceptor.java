@@ -18,6 +18,9 @@ import java.net.InetAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
+import static com.unknown.supervisor.core.filter.ContextConst.START_TIME;
+import static com.unknown.supervisor.core.filter.ContextConst.TRANS_NO;
+
 /**
  * @author zhongkunming
  */
@@ -53,13 +56,13 @@ public class SysLogInterceptor implements HandlerInterceptor {
         SysLog sysLog = new SysLog();
 
         // 基本信息
-        sysLog.setTransNo((String) request.getAttribute("requestId"));
+        sysLog.setTransNo((String) request.getAttribute(TRANS_NO));
         sysLog.setMethod(request.getMethod());
         sysLog.setUri(request.getRequestURI());
         sysLog.setQueryString(request.getQueryString());
 
         // 计算请求耗时
-        Long startTime = (Long) request.getAttribute("startTime");
+        Long startTime = (Long) request.getAttribute(START_TIME);
         if (startTime != null) {
             sysLog.setCost(System.currentTimeMillis() - startTime);
         }

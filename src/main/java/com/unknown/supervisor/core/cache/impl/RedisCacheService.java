@@ -15,7 +15,6 @@ import java.time.Duration;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 /**
@@ -50,8 +49,13 @@ public class RedisCacheService implements CacheService {
 
         try {
             T t = (T) redisTemplate.opsForValue().get(realKey);
-            if (t == null && supplier != null) {
+            if (t != null) {
+                return t;
+            }
+            if (supplier != null) {
                 t = supplier.get();
+            }
+            if (t != null) {
                 put(module, key, t, duration);
             }
             return t;
@@ -77,7 +81,7 @@ public class RedisCacheService implements CacheService {
             } else if (duration == null) {
                 redisTemplate.opsForValue().set(realKey, value);
             } else {
-                redisTemplate.opsForValue().set(realKey, value, duration.toMillis(), TimeUnit.MILLISECONDS);
+                redisTemplate.opsForValue().set(realKey, value, duration);
             }
         } catch (Exception e) {
             log.error("设置缓存失败，key: {}, value: {}, duration: {}", key, value, duration, e);
@@ -126,10 +130,10 @@ public class RedisCacheService implements CacheService {
     @Override
     public Set<String> keys(CacheModule module, String pattern) {
         if (StringUtils.isBlank(pattern)) return Collections.emptySet();
-
         String realPattern = buildRealKey(module, pattern);
+
         Set<String> keys = new HashSet<>();
-        try (Cursor<String> cursor = redisTemplate.scan(ScanOptions.scanOptions().match(realPattern).build());) {
+        try (Cursor<String> cursor = redisTemplate.scan(ScanOptions.scanOptions().match(realPattern).build())) {
             while (cursor.hasNext()) keys.add(cursor.next());
             return keys;
         } catch (Exception e) {

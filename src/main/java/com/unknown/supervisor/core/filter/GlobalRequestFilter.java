@@ -14,6 +14,9 @@ import org.springframework.web.util.ContentCachingResponseWrapper;
 
 import java.io.IOException;
 
+import static com.unknown.supervisor.core.filter.ContextConst.START_TIME;
+import static com.unknown.supervisor.core.filter.ContextConst.TRANS_NO;
+
 /**
  * @author zhongkunming
  */
@@ -26,12 +29,10 @@ public class GlobalRequestFilter extends OncePerRequestFilter {
     @SuppressWarnings("NullableProblems")
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         // 生成请求ID
-
-        String requestId = IdUtils.nextIdStr();
-        request.setAttribute("requestId", requestId);
+        request.setAttribute(TRANS_NO, IdUtils.nextIdStr());
 
         // 设置请求开始时间
-        request.setAttribute("startTime", System.currentTimeMillis());
+        request.setAttribute(START_TIME, System.currentTimeMillis());
 
         // 包装请求和响应对象以便读取请求体和响应体
         ContentCachingRequestWrapper wrappedRequest = new ContentCachingRequestWrapper(request);
