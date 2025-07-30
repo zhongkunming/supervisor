@@ -48,6 +48,7 @@ public class RedisCacheService implements CacheService {
         String realKey = buildRealKey(module, key);
 
         try {
+            @SuppressWarnings("unchecked")
             T t = (T) redisTemplate.opsForValue().get(realKey);
             if (t != null) {
                 return t;

@@ -2,7 +2,6 @@ package com.unknown.supervisor.config;
 
 import com.unknown.supervisor.utils.JwtUtils;
 import jakarta.annotation.PostConstruct;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
