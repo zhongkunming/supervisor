@@ -7,7 +7,7 @@
   "packageRules": [
     {
       "matchPackageNames": [
-        "com.alibaba:fastjson2"
+        "com.alibaba.fastjson2:fastjson2"
       ],
       "allowedVersions": "!/android/"
     }
