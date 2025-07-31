@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author zhongkunming
  */
 @RestController
-@RequestMapping("/sys/dictData")
+@RequestMapping("/sys/dict/data")
 @RequiredArgsConstructor
 @Tag(name = "字典数据管理", description = "字典数据管理")
 public class SysDictDataController {

@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author zhongkunming
  */
 @RestController
-@RequestMapping("/sys/userRole")
+@RequestMapping("/sys/user/role")
 @RequiredArgsConstructor
 @Tag(name = "用户角色管理", description = "用户角色管理")
 public class SysUserRoleController {

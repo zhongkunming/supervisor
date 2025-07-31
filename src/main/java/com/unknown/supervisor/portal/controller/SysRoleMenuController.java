@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author zhongkunming
  */
 @RestController
-@RequestMapping("/sys/roleMenu")
+@RequestMapping("/sys/role/menu")
 @RequiredArgsConstructor
 @Tag(name = "角色菜单管理", description = "角色菜单管理")
 public class SysRoleMenuController {

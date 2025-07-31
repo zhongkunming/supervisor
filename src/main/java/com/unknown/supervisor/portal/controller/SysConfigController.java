@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @Tag(name = "参数配置管理")
 @RestController
-@RequestMapping("/portal/config")
+@RequestMapping("/sys/config")
 @RequiredArgsConstructor
 public class SysConfigController {
 

@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author zhongkunming
  */
 @RestController
-@RequestMapping("/sys/dictType")
+@RequestMapping("/sys/dict/type")
 @RequiredArgsConstructor
 @Tag(name = "字典类型管理", description = "字典类型管理")
 public class SysDictTypeController {
