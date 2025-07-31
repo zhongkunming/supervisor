@@ -5,8 +5,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.time.LocalDateTime;
-
 /**
  * 查询菜单VO
  *
@@ -16,12 +14,6 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper = true)
 @Schema(description = "查询菜单VO")
 public class SysMenuQueryInputVO extends PageRequest {
-
-    /**
-     * 主键ID
-     */
-    @Schema(description = "主键ID")
-    private Long id;
 
     /**
      * 菜单编码
@@ -39,7 +31,7 @@ public class SysMenuQueryInputVO extends PageRequest {
      * 父菜单编码
      */
     @Schema(description = "父菜单编码")
-    private Long pcode;
+    private String pcode;
 
     /**
      * 路由地址
@@ -106,28 +98,4 @@ public class SysMenuQueryInputVO extends PageRequest {
      */
     @Schema(description = "菜单状态（0正常 1停用）")
     private String status;
-
-    /**
-     * 显示顺序
-     */
-    @Schema(description = "显示顺序")
-    private Integer orderNum;
-
-    /**
-     * 创建时间
-     */
-    @Schema(description = "创建时间")
-    private LocalDateTime createDt;
-
-    /**
-     * 更新时间
-     */
-    @Schema(description = "更新时间")
-    private LocalDateTime updateDt;
-
-    /**
-     * 备注
-     */
-    @Schema(description = "备注")
-    private String remark;
 }

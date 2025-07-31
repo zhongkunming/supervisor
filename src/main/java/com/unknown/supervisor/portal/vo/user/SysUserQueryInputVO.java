@@ -18,12 +18,6 @@ import java.time.LocalDateTime;
 public class SysUserQueryInputVO extends PageRequest {
 
     /**
-     * 主键ID
-     */
-    @Schema(description = "主键ID")
-    private Long id;
-
-    /**
      * 操作员号
      */
     @Schema(description = "操作员号")
@@ -60,32 +54,8 @@ public class SysUserQueryInputVO extends PageRequest {
     private String sex;
 
     /**
-     * 头像地址
-     */
-    @Schema(description = "头像地址")
-    private String avatar;
-
-    /**
      * 账号状态（0正常 1停用）
      */
     @Schema(description = "账号状态（0正常 1停用）")
     private String status;
-
-    /**
-     * 创建时间
-     */
-    @Schema(description = "创建时间")
-    private LocalDateTime createDt;
-
-    /**
-     * 更新时间
-     */
-    @Schema(description = "更新时间")
-    private LocalDateTime updateDt;
-
-    /**
-     * 备注
-     */
-    @Schema(description = "备注")
-    private String remark;
 }

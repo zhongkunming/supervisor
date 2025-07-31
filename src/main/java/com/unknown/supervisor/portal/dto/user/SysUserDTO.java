@@ -58,19 +58,24 @@ public class SysUserDTO {
     private String password;
 
     /**
+     * 密码最后更新时间
+     */
+    private LocalDateTime pwdUpdateDt;
+
+    /**
      * 账号状态（0正常 1停用）
      */
     private String status;
 
     /**
+     * 显示顺序
+     */
+    private Integer orderNum;
+
+    /**
      * 删除标志
      */
     private Boolean isDelete;
-
-    /**
-     * 密码最后更新时间
-     */
-    private LocalDateTime pwdUpdateDate;
 
     /**
      * 创建人

@@ -62,6 +62,13 @@ public class SysUserVO {
     @Schema(description = "头像地址")
     private String avatar;
 
+
+    /**
+     * 密码最后更新时间
+     */
+    @Schema(description = "密码最后更新时间")
+    private LocalDateTime pwdUpdateDt;
+
     /**
      * 账号状态（0正常 1停用）
      */
@@ -69,16 +76,16 @@ public class SysUserVO {
     private String status;
 
     /**
+     * 显示顺序
+     */
+    @Schema(description = "显示顺序")
+    private Integer orderNum;
+
+    /**
      * 删除标志
      */
     @Schema(description = "删除标志")
     private Boolean isDelete;
-
-    /**
-     * 密码最后更新时间
-     */
-    @Schema(description = "密码最后更新时间")
-    private LocalDateTime pwdUpdateDate;
 
     /**
      * 创建时间

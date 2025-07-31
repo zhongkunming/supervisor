@@ -17,10 +17,4 @@ public class LoginOutputVO {
      */
     @Schema(description = "访问令牌")
     private String token;
-
-    /**
-     * 用户信息
-     */
-    @Schema(description = "用户信息")
-    private UserInfoOutputVO userInfo;
 }

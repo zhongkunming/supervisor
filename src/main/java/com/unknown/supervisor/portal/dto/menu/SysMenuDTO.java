@@ -30,7 +30,7 @@ public class SysMenuDTO {
     /**
      * 父菜单编码
      */
-    private Long pcode;
+    private String pcode;
 
     /**
      * 路由地址

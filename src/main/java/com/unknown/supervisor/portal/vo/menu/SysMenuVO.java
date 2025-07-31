@@ -36,7 +36,7 @@ public class SysMenuVO {
      * 父菜单编码
      */
     @Schema(description = "父菜单编码")
-    private Long pcode;
+    private String pcode;
 
     /**
      * 路由地址

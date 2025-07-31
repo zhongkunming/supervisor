@@ -75,6 +75,12 @@ public class SysUserUpdateInputVO {
     private String status;
 
     /**
+     * 显示顺序
+     */
+    @Schema(description = "显示顺序")
+    private Integer orderNum;
+
+    /**
      * 备注
      */
     @Schema(description = "备注")

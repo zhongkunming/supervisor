@@ -19,8 +19,6 @@ import org.apache.commons.lang3.Strings;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -42,20 +40,13 @@ public class SysUserServiceImpl implements SysUserService {
         LambdaQueryWrapper<SysUser> wrapper = new LambdaQueryWrapper<>();
 
         // 构建查询条件
-        wrapper.eq(Objects.nonNull(inputVO.getId()), SysUser::getId, inputVO.getId())
-                .like(StringUtils.isNotBlank(inputVO.getOperNo()), SysUser::getOperNo, inputVO.getOperNo())
+        wrapper.like(StringUtils.isNotBlank(inputVO.getOperNo()), SysUser::getOperNo, inputVO.getOperNo())
                 .like(StringUtils.isNotBlank(inputVO.getNickName()), SysUser::getNickName, inputVO.getNickName())
-                .eq(StringUtils.isNotBlank(inputVO.getUserType()), SysUser::getUserType, inputVO.getUserType())
-                .like(StringUtils.isNotBlank(inputVO.getEmail()), SysUser::getEmail, inputVO.getEmail())
                 .like(StringUtils.isNotBlank(inputVO.getPhone()), SysUser::getPhone, inputVO.getPhone())
                 .eq(StringUtils.isNotBlank(inputVO.getSex()), SysUser::getSex, inputVO.getSex())
-                .like(StringUtils.isNotBlank(inputVO.getAvatar()), SysUser::getAvatar, inputVO.getAvatar())
                 .eq(StringUtils.isNotBlank(inputVO.getStatus()), SysUser::getStatus, inputVO.getStatus())
-                .ge(Objects.nonNull(inputVO.getCreateDt()), SysUser::getCreateDt, inputVO.getCreateDt())
-                .le(Objects.nonNull(inputVO.getUpdateDt()), SysUser::getUpdateDt, inputVO.getUpdateDt())
-                .like(StringUtils.isNotBlank(inputVO.getRemark()), SysUser::getRemark, inputVO.getRemark())
                 .eq(SysUser::getIsDelete, false)
-                .orderByDesc(SysUser::getCreateDt);
+                .orderByAsc(SysUser::getOrderNum);
 
         sysUserMapper.selectPage(page, wrapper);
         return PageResult.trans(page, this::convertToVO);
@@ -83,7 +74,7 @@ public class SysUserServiceImpl implements SysUserService {
         }
         SysUser sysUser = BeanUtils.copyProperties(inputVO, SysUser::new);
         sysUser.setPassword(PasswdUtils.encryptPassword(inputVO.getPassword()));
-        sysUser.setPwdUpdateDate(LocalDateTime.now());
+        sysUser.setPwdUpdateDt(LocalDateTime.now());
         sysUser.setIsDelete(false);
         sysUserMapper.insert(sysUser);
     }
@@ -110,7 +101,7 @@ public class SysUserServiceImpl implements SysUserService {
         SysUser sysUser = BeanUtils.copyProperties(inputVO, SysUser::new);
         if (StringUtils.isNotBlank(inputVO.getPassword())) {
             sysUser.setPassword(PasswdUtils.encryptPassword(inputVO.getPassword()));
-            sysUser.setPwdUpdateDate(LocalDateTime.now());
+            sysUser.setPwdUpdateDt(LocalDateTime.now());
         }
         sysUserMapper.updateById(sysUser);
     }
@@ -119,6 +110,13 @@ public class SysUserServiceImpl implements SysUserService {
     @Transactional(rollbackFor = Exception.class)
     public void deleteUser(SysUserDeleteInputVO inputVO) {
         sysUserMapper.deleteByIds(inputVO.getIds());
+    }
+
+    @Override
+    public SysUser getUserByOperNo(String operNo) {
+        return sysUserMapper.selectOne(new LambdaQueryWrapper<SysUser>()
+                .eq(SysUser::getOperNo, operNo)
+                .eq(SysUser::getIsDelete, false));
     }
 
     /**

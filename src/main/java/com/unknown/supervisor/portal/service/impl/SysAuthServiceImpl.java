@@ -5,17 +5,10 @@ import com.unknown.supervisor.core.cache.CacheModule;
 import com.unknown.supervisor.core.cache.CacheService;
 import com.unknown.supervisor.core.exception.BusinessException;
 import com.unknown.supervisor.portal.common.PortalResultCode;
-import com.unknown.supervisor.portal.entity.SysMenu;
-import com.unknown.supervisor.portal.entity.SysRole;
-import com.unknown.supervisor.portal.entity.SysRoleMenu;
-import com.unknown.supervisor.portal.entity.SysUser;
-import com.unknown.supervisor.portal.entity.SysUserRole;
-import com.unknown.supervisor.portal.mapper.SysMenuMapper;
-import com.unknown.supervisor.portal.mapper.SysRoleMapper;
-import com.unknown.supervisor.portal.mapper.SysRoleMenuMapper;
-import com.unknown.supervisor.portal.mapper.SysUserMapper;
-import com.unknown.supervisor.portal.mapper.SysUserRoleMapper;
+import com.unknown.supervisor.portal.entity.*;
+import com.unknown.supervisor.portal.mapper.*;
 import com.unknown.supervisor.portal.service.SysAuthService;
+import com.unknown.supervisor.portal.service.SysUserService;
 import com.unknown.supervisor.portal.vo.auth.LoginInputVO;
 import com.unknown.supervisor.portal.vo.auth.LoginOutputVO;
 import com.unknown.supervisor.portal.vo.auth.RouterOutputVO;
@@ -26,6 +19,7 @@ import com.unknown.supervisor.utils.PasswdUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -52,42 +46,37 @@ public class SysAuthServiceImpl implements SysAuthService {
     private final SysMenuMapper sysMenuMapper;
     private final CacheService cacheService;
 
+    private final SysUserService sysUserService;
+
     @Override
     public LoginOutputVO login(LoginInputVO inputVO) {
         String operNo = inputVO.getOperNo();
         String password = inputVO.getPassword();
 
         // 查询用户信息
-        LambdaQueryWrapper<SysUser> userWrapper = new LambdaQueryWrapper<>();
-        userWrapper.eq(SysUser::getOperNo, operNo)
-                .eq(SysUser::getIsDelete, false);
-        SysUser user = sysUserMapper.selectOne(userWrapper);
-        
-        if (Objects.isNull(user)) {
+        SysUser sysUser = sysUserService.getUserByOperNo(operNo);
+        if (Objects.isNull(sysUser)) {
             throw new BusinessException(PortalResultCode.USER_NOT_FOUND);
         }
 
         // 检查用户状态
-        if (!"0".equals(user.getStatus())) {
+        if (!Strings.CS.equals(sysUser.getStatus(), "0")) {
             throw new BusinessException(PortalResultCode.USER_DISABLED);
         }
 
         // 验证密码
-        if (!PasswdUtils.verifyPassword(password, user.getPassword())) {
+        if (!PasswdUtils.verifyPassword(password, sysUser.getPassword())) {
             throw new BusinessException(PortalResultCode.USER_PASSWORD_ERROR);
         }
 
         // 生成JWT令牌
         String token = JwtUtils.generateToken(operNo);
-        
         // 将令牌存储到缓存中
-        cacheService.put(CacheModule.TOKEN, token, operNo, Duration.ofHours(1));
+        cacheService.put(CacheModule.TOKEN, token, operNo, Duration.ofHours(12));
 
         // 构建返回结果
         LoginOutputVO outputVO = new LoginOutputVO();
         outputVO.setToken(token);
-        outputVO.setUserInfo(buildUserInfo(user));
-
         return outputVO;
     }
 
@@ -105,46 +94,34 @@ public class SysAuthServiceImpl implements SysAuthService {
     @Override
     public UserInfoOutputVO getUserInfo() {
         String operNo = JwtUtils.getOperNo();
-        
+
         // 查询用户信息
-        LambdaQueryWrapper<SysUser> userWrapper = new LambdaQueryWrapper<>();
-        userWrapper.eq(SysUser::getOperNo, operNo)
-                .eq(SysUser::getIsDelete, false);
-        SysUser user = sysUserMapper.selectOne(userWrapper);
-        
-        if (Objects.isNull(user)) {
+        SysUser sysUser = sysUserService.getUserByOperNo(operNo);
+        if (Objects.isNull(sysUser)) {
             throw new BusinessException(PortalResultCode.USER_NOT_FOUND);
         }
 
-        return buildUserInfo(user);
+        UserInfoOutputVO outputVO = BeanUtils.copyProperties(sysUser, UserInfoOutputVO::new);
+        // 获取用户角色
+        List<String> roles = getUserRoles(operNo);
+        outputVO.setRoles(roles);
+
+        // 获取用户权限
+        List<String> permissions = getUserPermissions(operNo);
+        outputVO.setPermissions(permissions);
+
+        return outputVO;
     }
 
     @Override
     public List<RouterOutputVO> getRouters() {
         String operNo = JwtUtils.getOperNo();
-        
+
         // 获取用户菜单权限
         List<SysMenu> menus = getUserMenus(operNo);
-        
+
         // 构建路由树
         return buildRouters(menus);
-    }
-
-    /**
-     * 构建用户信息
-     */
-    private UserInfoOutputVO buildUserInfo(SysUser user) {
-        UserInfoOutputVO userInfo = BeanUtils.copyProperties(user, UserInfoOutputVO::new);
-        
-        // 获取用户角色
-        List<String> roles = getUserRoles(user.getOperNo());
-        userInfo.setRoles(roles);
-        
-        // 获取用户权限
-        List<String> permissions = getUserPermissions(user.getOperNo());
-        userInfo.setPermissions(permissions);
-        
-        return userInfo;
     }
 
     /**
@@ -155,23 +132,23 @@ public class SysAuthServiceImpl implements SysAuthService {
         LambdaQueryWrapper<SysUserRole> userRoleWrapper = new LambdaQueryWrapper<>();
         userRoleWrapper.eq(SysUserRole::getOperNo, operNo);
         List<SysUserRole> userRoles = sysUserRoleMapper.selectList(userRoleWrapper);
-        
+
         if (userRoles.isEmpty()) {
             return new ArrayList<>();
         }
-        
+
         // 获取角色编码列表
         List<String> roleCodes = userRoles.stream()
                 .map(SysUserRole::getRoleCode)
                 .collect(Collectors.toList());
-        
+
         // 查询角色信息
         LambdaQueryWrapper<SysRole> roleWrapper = new LambdaQueryWrapper<>();
         roleWrapper.in(SysRole::getCode, roleCodes)
                 .eq(SysRole::getStatus, "0")
                 .eq(SysRole::getIsDelete, false);
         List<SysRole> roles = sysRoleMapper.selectList(roleWrapper);
-        
+
         return roles.stream()
                 .map(SysRole::getKey)
                 .collect(Collectors.toList());
@@ -182,7 +159,7 @@ public class SysAuthServiceImpl implements SysAuthService {
      */
     private List<String> getUserPermissions(String operNo) {
         List<SysMenu> menus = getUserMenus(operNo);
-        
+
         return menus.stream()
                 .map(SysMenu::getPerms)
                 .filter(StringUtils::isNotBlank)
@@ -198,37 +175,37 @@ public class SysAuthServiceImpl implements SysAuthService {
         LambdaQueryWrapper<SysUserRole> userRoleWrapper = new LambdaQueryWrapper<>();
         userRoleWrapper.eq(SysUserRole::getOperNo, operNo);
         List<SysUserRole> userRoles = sysUserRoleMapper.selectList(userRoleWrapper);
-        
+
         if (userRoles.isEmpty()) {
             return new ArrayList<>();
         }
-        
+
         // 获取角色编码列表
         List<String> roleCodes = userRoles.stream()
                 .map(SysUserRole::getRoleCode)
                 .collect(Collectors.toList());
-        
+
         // 查询角色菜单关联
         LambdaQueryWrapper<SysRoleMenu> roleMenuWrapper = new LambdaQueryWrapper<>();
         roleMenuWrapper.in(SysRoleMenu::getRoleCode, roleCodes);
         List<SysRoleMenu> roleMenus = sysRoleMenuMapper.selectList(roleMenuWrapper);
-        
+
         if (roleMenus.isEmpty()) {
             return new ArrayList<>();
         }
-        
+
         // 获取菜单编码列表
         List<String> menuCodes = roleMenus.stream()
                 .map(SysRoleMenu::getMenuCode)
                 .distinct()
                 .collect(Collectors.toList());
-        
+
         // 查询菜单信息
         LambdaQueryWrapper<SysMenu> menuWrapper = new LambdaQueryWrapper<>();
         menuWrapper.in(SysMenu::getCode, menuCodes)
                 .eq(SysMenu::getStatus, "0")
                 .orderByAsc(SysMenu::getOrderNum);
-        
+
         return sysMenuMapper.selectList(menuWrapper);
     }
 
@@ -237,19 +214,19 @@ public class SysAuthServiceImpl implements SysAuthService {
      */
     private List<RouterOutputVO> buildRouters(List<SysMenu> menus) {
         List<RouterOutputVO> routers = new ArrayList<>();
-        
+
         // 先找出所有的父级菜单
         List<SysMenu> rootMenus = menus.stream()
-                .filter(menu -> Objects.isNull(menu.getPcode()) || menu.getPcode() == 0L)
+                .filter(menu -> Objects.isNull(menu.getPcode()) || Strings.CS.equals(menu.getPcode(), "0"))
                 .sorted(Comparator.comparing(SysMenu::getOrderNum))
-                .collect(Collectors.toList());
-        
+                .toList();
+
         // 递归构建路由树
         for (SysMenu rootMenu : rootMenus) {
             RouterOutputVO router = buildRouter(rootMenu, menus);
             routers.add(router);
         }
-        
+
         return routers;
     }
 
@@ -263,7 +240,7 @@ public class SysAuthServiceImpl implements SysAuthService {
         router.setComponent(menu.getComponent());
         router.setQuery(menu.getQuery());
         router.setHidden("1".equals(menu.getVisible()));
-        
+
         // 构建meta信息
         RouterOutputVO.MetaVO meta = new RouterOutputVO.MetaVO();
         meta.setTitle(menu.getName());
@@ -273,13 +250,13 @@ public class SysAuthServiceImpl implements SysAuthService {
             meta.setLink(menu.getPath());
         }
         router.setMeta(meta);
-        
+
         // 查找子菜单
         List<SysMenu> childMenus = allMenus.stream()
-                .filter(childMenu -> Objects.equals(childMenu.getPcode(), Long.valueOf(menu.getCode())))
+                .filter(childMenu -> Strings.CS.equals(childMenu.getPcode(), menu.getCode()))
                 .sorted(Comparator.comparing(SysMenu::getOrderNum))
-                .collect(Collectors.toList());
-        
+                .toList();
+
         if (!childMenus.isEmpty()) {
             List<RouterOutputVO> children = new ArrayList<>();
             for (SysMenu childMenu : childMenus) {
@@ -288,7 +265,7 @@ public class SysAuthServiceImpl implements SysAuthService {
             }
             router.setChildren(children);
         }
-        
+
         return router;
     }
 }

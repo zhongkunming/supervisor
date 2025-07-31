@@ -1,6 +1,7 @@
 package com.unknown.supervisor.portal.service;
 
 import com.unknown.supervisor.core.common.PageResult;
+import com.unknown.supervisor.portal.entity.SysUser;
 import com.unknown.supervisor.portal.vo.user.*;
 
 /**
@@ -46,4 +47,13 @@ public interface SysUserService {
      * @param inputVO 用户ID列表
      */
     void deleteUser(SysUserDeleteInputVO inputVO);
+
+
+    /**
+     * 根据操作员号查询用户信息
+     *
+     * @param operNo 操作员号
+     * @return 用户信息
+     */
+    SysUser getUserByOperNo(String operNo);
 }

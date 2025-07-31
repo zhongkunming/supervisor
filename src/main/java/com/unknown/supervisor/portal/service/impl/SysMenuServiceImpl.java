@@ -41,10 +41,9 @@ public class SysMenuServiceImpl implements SysMenuService {
         LambdaQueryWrapper<SysMenu> wrapper = new LambdaQueryWrapper<>();
 
         // 构建查询条件
-        wrapper.eq(Objects.nonNull(inputVO.getId()), SysMenu::getId, inputVO.getId())
-                .like(StringUtils.isNotBlank(inputVO.getCode()), SysMenu::getCode, inputVO.getCode())
+        wrapper.eq(StringUtils.isNotBlank(inputVO.getCode()), SysMenu::getCode, inputVO.getCode())
                 .like(StringUtils.isNotBlank(inputVO.getName()), SysMenu::getName, inputVO.getName())
-                .eq(Objects.nonNull(inputVO.getPcode()), SysMenu::getPcode, inputVO.getPcode())
+                .eq(StringUtils.isNotBlank(inputVO.getPcode()), SysMenu::getPcode, inputVO.getPcode())
                 .like(StringUtils.isNotBlank(inputVO.getPath()), SysMenu::getPath, inputVO.getPath())
                 .like(StringUtils.isNotBlank(inputVO.getComponent()), SysMenu::getComponent, inputVO.getComponent())
                 .like(StringUtils.isNotBlank(inputVO.getQuery()), SysMenu::getQuery, inputVO.getQuery())
@@ -56,12 +55,8 @@ public class SysMenuServiceImpl implements SysMenuService {
                 .like(StringUtils.isNotBlank(inputVO.getPerms()), SysMenu::getPerms, inputVO.getPerms())
                 .like(StringUtils.isNotBlank(inputVO.getIcon()), SysMenu::getIcon, inputVO.getIcon())
                 .eq(StringUtils.isNotBlank(inputVO.getStatus()), SysMenu::getStatus, inputVO.getStatus())
-                .eq(Objects.nonNull(inputVO.getOrderNum()), SysMenu::getOrderNum, inputVO.getOrderNum())
-                .ge(Objects.nonNull(inputVO.getCreateDt()), SysMenu::getCreateDt, inputVO.getCreateDt())
-                .le(Objects.nonNull(inputVO.getUpdateDt()), SysMenu::getUpdateDt, inputVO.getUpdateDt())
-                .like(StringUtils.isNotBlank(inputVO.getRemark()), SysMenu::getRemark, inputVO.getRemark())
-                .orderByAsc(SysMenu::getOrderNum)
-                .orderByDesc(SysMenu::getCreateDt);
+                .orderByAsc(SysMenu::getPcode)
+                .orderByAsc(SysMenu::getOrderNum);
 
         sysMenuMapper.selectPage(page, wrapper);
         return PageResult.trans(page, this::convertToVO);
@@ -88,11 +83,17 @@ public class SysMenuServiceImpl implements SysMenuService {
             throw new BusinessException(PortalResultCode.MENU_ALREADY_EXISTS, code);
         }
 
+        String pcode = inputVO.getPcode();
+        if (StringUtils.isBlank(pcode)) {
+            inputVO.setPcode("0");
+            pcode = inputVO.getPcode();
+        }
+
         // 检查父菜单是否存在
-        Long pcode = inputVO.getPcode();
-        if (Objects.nonNull(pcode) && pcode > 0) {
-            SysMenu parentMenu = sysMenuMapper.selectById(pcode);
-            if (Objects.isNull(parentMenu)) {
+        if (!Strings.CS.equals(pcode, "0")) {
+            wrapper.clear();
+            wrapper.eq(SysMenu::getCode, pcode);
+            if (!sysMenuMapper.exists(wrapper)) {
                 throw new BusinessException(PortalResultCode.MENU_PARENT_NOT_FOUND);
             }
         }
@@ -110,27 +111,32 @@ public class SysMenuServiceImpl implements SysMenuService {
             throw new BusinessException(PortalResultCode.MENU_NOT_FOUND);
         }
 
-        // 检查菜单编码是否被其他菜单使用
         String code = inputVO.getCode();
-        if (StringUtils.isNotBlank(code) && !Strings.CS.equals(code, existMenu.getCode())) {
-            LambdaQueryWrapper<SysMenu> wrapper = new LambdaQueryWrapper<>();
-            wrapper.eq(SysMenu::getCode, code)
-                    .ne(SysMenu::getId, id);
+        String pcode = inputVO.getPcode();
+        if (StringUtils.isBlank(pcode)) {
+            inputVO.setPcode("0");
+            pcode = inputVO.getPcode();
+        }
+
+        // 不能将父菜单设置为自己的子菜单
+        if (Strings.CS.equals(pcode, code)) {
+            throw new BusinessException(PortalResultCode.MENU_PARENT_NOT_FOUND);
+        }
+
+        // 检查菜单编码是否被其他菜单使用
+        LambdaQueryWrapper<SysMenu> wrapper = new LambdaQueryWrapper<>();
+        if (!Strings.CS.equals(code, existMenu.getCode())) {
+            wrapper.eq(SysMenu::getCode, code);
             if (sysMenuMapper.exists(wrapper)) {
                 throw new BusinessException(PortalResultCode.MENU_ALREADY_EXISTS, code);
             }
         }
 
         // 检查父菜单是否存在
-        Long pcode = inputVO.getPcode();
-        if (Objects.nonNull(pcode) && pcode > 0 && !Objects.equals(pcode, existMenu.getPcode())) {
-            SysMenu parentMenu = sysMenuMapper.selectById(pcode);
-            if (Objects.isNull(parentMenu)) {
-                throw new BusinessException(PortalResultCode.MENU_PARENT_NOT_FOUND);
-            }
-
-            // 不能将父菜单设置为自己的子菜单
-            if (Objects.equals(pcode, id)) {
+        if (!Strings.CS.equals(pcode, "0") && !Strings.CS.equals(pcode, existMenu.getPcode())) {
+            wrapper.clear();
+            wrapper.eq(SysMenu::getCode, pcode);
+            if (!sysMenuMapper.exists(wrapper)) {
                 throw new BusinessException(PortalResultCode.MENU_PARENT_NOT_FOUND);
             }
         }
@@ -149,15 +155,16 @@ public class SysMenuServiceImpl implements SysMenuService {
             }
 
             // 检查是否存在子菜单
+            String code = existMenu.getCode();
             LambdaQueryWrapper<SysMenu> childWrapper = new LambdaQueryWrapper<>();
-            childWrapper.eq(SysMenu::getPcode, id);
+            childWrapper.eq(SysMenu::getPcode, code);
             if (sysMenuMapper.exists(childWrapper)) {
                 throw new BusinessException(PortalResultCode.MENU_HAS_CHILDREN);
             }
 
             // 检查菜单是否被角色使用
             LambdaQueryWrapper<SysRoleMenu> roleMenuWrapper = new LambdaQueryWrapper<>();
-            roleMenuWrapper.eq(SysRoleMenu::getMenuCode, existMenu.getCode());
+            roleMenuWrapper.eq(SysRoleMenu::getMenuCode, code);
             if (sysRoleMenuMapper.exists(roleMenuWrapper)) {
                 throw new BusinessException(PortalResultCode.MENU_HAS_CHILDREN);
             }
