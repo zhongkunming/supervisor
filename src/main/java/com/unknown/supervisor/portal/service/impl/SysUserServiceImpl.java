@@ -38,6 +38,23 @@ public class SysUserServiceImpl implements SysUserService {
     public PageResult<SysUserVO> pageQuery(SysUserQueryInputVO inputVO) {
         Page<SysUser> page = inputVO.toPage();
         LambdaQueryWrapper<SysUser> wrapper = new LambdaQueryWrapper<>();
+
+        // 构建查询条件
+        wrapper.eq(Objects.nonNull(inputVO.getId()), SysUser::getId, inputVO.getId())
+                .like(StringUtils.isNotBlank(inputVO.getOperNo()), SysUser::getOperNo, inputVO.getOperNo())
+                .like(StringUtils.isNotBlank(inputVO.getNickName()), SysUser::getNickName, inputVO.getNickName())
+                .eq(StringUtils.isNotBlank(inputVO.getUserType()), SysUser::getUserType, inputVO.getUserType())
+                .like(StringUtils.isNotBlank(inputVO.getEmail()), SysUser::getEmail, inputVO.getEmail())
+                .like(StringUtils.isNotBlank(inputVO.getPhone()), SysUser::getPhone, inputVO.getPhone())
+                .eq(StringUtils.isNotBlank(inputVO.getSex()), SysUser::getSex, inputVO.getSex())
+                .like(StringUtils.isNotBlank(inputVO.getAvatar()), SysUser::getAvatar, inputVO.getAvatar())
+                .eq(StringUtils.isNotBlank(inputVO.getStatus()), SysUser::getStatus, inputVO.getStatus())
+                .ge(Objects.nonNull(inputVO.getCreateDt()), SysUser::getCreateDt, inputVO.getCreateDt())
+                .le(Objects.nonNull(inputVO.getUpdateDt()), SysUser::getUpdateDt, inputVO.getUpdateDt())
+                .like(StringUtils.isNotBlank(inputVO.getRemark()), SysUser::getRemark, inputVO.getRemark())
+                .eq(SysUser::getIsDelete, false)
+                .orderByDesc(SysUser::getCreateDt);
+
         sysUserMapper.selectPage(page, wrapper);
         return PageResult.trans(page, this::convertToVO);
     }

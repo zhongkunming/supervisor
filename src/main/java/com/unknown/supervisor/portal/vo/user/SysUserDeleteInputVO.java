@@ -12,6 +12,7 @@ import java.util.List;
  * @author zhongkunming
  */
 @Data
+@Schema(description = "删除用户VO")
 public class SysUserDeleteInputVO {
 
     /**

@@ -10,6 +10,7 @@ import lombok.Data;
  * @author zhongkunming
  */
 @Data
+@Schema(description = "创建角色VO")
 public class SysRoleCreateInputVO {
 
     /**
@@ -29,20 +30,24 @@ public class SysRoleCreateInputVO {
     /**
      * 角色权限字符串
      */
+    @Schema(description = "角色权限字符串")
     private String key;
 
     /**
      * 角色状态（0正常 1停用）
      */
+    @Schema(description = "角色状态（0正常 1停用）")
     private String status;
 
     /**
      * 显示顺序
      */
+    @Schema(description = "显示顺序")
     private Integer orderNum;
 
     /**
      * 备注
      */
+    @Schema(description = "备注")
     private String remark;
 }

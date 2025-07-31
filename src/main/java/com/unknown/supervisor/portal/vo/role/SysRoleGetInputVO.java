@@ -10,6 +10,7 @@ import lombok.Data;
  * @author zhongkunming
  */
 @Data
+@Schema(description = "获取角色信息VO")
 public class SysRoleGetInputVO {
 
     /**

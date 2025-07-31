@@ -10,6 +10,7 @@ import lombok.Data;
  * @author zhongkunming
  */
 @Data
+@Schema(description = "获取菜单信息VO")
 public class SysMenuGetInputVO {
 
     /**
