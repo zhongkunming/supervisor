@@ -13,7 +13,7 @@ import lombok.Getter;
 public enum CacheModule {
 
     /**
-     * 令牌模块
+     * 默认模块
      */
     DEFAULT("default", "默认模块"),
 

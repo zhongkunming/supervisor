@@ -1,12 +1,16 @@
 package com.unknown.supervisor.portal.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.unknown.supervisor.config.JwtConfig;
 import com.unknown.supervisor.core.cache.CacheModule;
 import com.unknown.supervisor.core.cache.CacheService;
 import com.unknown.supervisor.core.exception.BusinessException;
 import com.unknown.supervisor.portal.common.PortalResultCode;
 import com.unknown.supervisor.portal.entity.*;
-import com.unknown.supervisor.portal.mapper.*;
+import com.unknown.supervisor.portal.mapper.SysMenuMapper;
+import com.unknown.supervisor.portal.mapper.SysRoleMapper;
+import com.unknown.supervisor.portal.mapper.SysRoleMenuMapper;
+import com.unknown.supervisor.portal.mapper.SysUserRoleMapper;
 import com.unknown.supervisor.portal.service.SysAuthService;
 import com.unknown.supervisor.portal.service.SysUserService;
 import com.unknown.supervisor.portal.vo.auth.LoginInputVO;
@@ -39,14 +43,13 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SysAuthServiceImpl implements SysAuthService {
 
-    private final SysUserMapper sysUserMapper;
+    private final JwtConfig jwtConfig;
+    private final CacheService cacheService;
+    private final SysUserService sysUserService;
     private final SysUserRoleMapper sysUserRoleMapper;
     private final SysRoleMapper sysRoleMapper;
     private final SysRoleMenuMapper sysRoleMenuMapper;
     private final SysMenuMapper sysMenuMapper;
-    private final CacheService cacheService;
-
-    private final SysUserService sysUserService;
 
     @Override
     public LoginOutputVO login(LoginInputVO inputVO) {
@@ -72,7 +75,7 @@ public class SysAuthServiceImpl implements SysAuthService {
         // 生成JWT令牌
         String token = JwtUtils.generateToken(operNo);
         // 将令牌存储到缓存中
-        cacheService.put(CacheModule.TOKEN, token, operNo, Duration.ofHours(12));
+        cacheService.put(CacheModule.TOKEN, token, operNo, Duration.ofSeconds(jwtConfig.getExpire()));
 
         // 构建返回结果
         LoginOutputVO outputVO = new LoginOutputVO();

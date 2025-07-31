@@ -195,14 +195,13 @@ public class JwtUtils {
     }
 
     /**
-     * 从HttpServletRequest中获取操作员信息（用户主题）
+     * 从HttpServletRequest中获取操作员号
      *
-     * @param request HTTP请求对象
-     * @return 操作员信息
+     * @param token JWT令牌
+     * @return 操作员号
      * @throws BusinessException 如果获取失败
      */
-    public static String getOperNo(HttpServletRequest request) {
-        String token = getToken(request);
+    public static String getOperNo(String token) {
         String subject = getSubject(token);
         if (StringUtils.isBlank(subject)) {
             throw new BusinessException(GlobalResultCode.JWT_OPER_NO_ERROR);
@@ -211,9 +210,21 @@ public class JwtUtils {
     }
 
     /**
-     * 从当前请求上下文中获取操作员信息（用户主题）
+     * 从HttpServletRequest中获取操作员号
      *
-     * @return 操作员信息
+     * @param request HTTP请求对象
+     * @return 操作员号
+     * @throws BusinessException 如果获取失败
+     */
+    public static String getOperNo(HttpServletRequest request) {
+        String token = getToken(request);
+        return getOperNo(token);
+    }
+
+    /**
+     * 从当前请求上下文中获取操作员号
+     *
+     * @return 操作员号
      * @throws BusinessException 如果获取失败
      */
     public static String getOperNo() {

@@ -18,9 +18,7 @@ public enum PortalResultCode implements ResultCode {
     USER_ALREADY_EXISTS("41002", "用户已存在: {0}"),
     USER_STATUS_INVALID("41003", "用户状态无效"),
     USER_PASSWORD_ERROR("41004", "密码错误"),
-    USER_ACCOUNT_DISABLED("41005", "账户已被禁用"),
-    USER_ACCOUNT_DELETED("41006", "账户已被删除"),
-    USER_DISABLED("41007", "用户已被停用"),
+    USER_DISABLED("41005", "用户已被停用"),
 
     // 角色相关错误码 42xxx
     ROLE_NOT_FOUND("42001", "角色不存在"),

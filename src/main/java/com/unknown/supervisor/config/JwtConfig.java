@@ -51,7 +51,7 @@ public class JwtConfig {
      * 令牌有效期，单位秒
      */
     @NotNull(message = "令牌有效期不能为空")
-    @Range(min = 60, message = "令牌有效期最小为60秒")
+    @Range(min = 3600, message = "令牌有效期最小为1小时")
     private Long expire;
 
     /**

@@ -1,5 +1,6 @@
 package com.unknown.supervisor.core.interceptor;
 
+import com.unknown.supervisor.config.JwtConfig;
 import com.unknown.supervisor.core.cache.CacheModule;
 import com.unknown.supervisor.core.cache.CacheService;
 import com.unknown.supervisor.core.common.GlobalResultCode;
@@ -13,6 +14,8 @@ import org.apache.commons.lang3.Strings;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import java.time.Duration;
+
 /**
  * @author zhongkunming
  */
@@ -21,6 +24,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 @RequiredArgsConstructor
 public class TokenInterceptor implements HandlerInterceptor {
 
+    private final JwtConfig jwtConfig;
     private final CacheService cacheService;
 
     @SuppressWarnings("NullableProblems")
@@ -29,11 +33,12 @@ public class TokenInterceptor implements HandlerInterceptor {
         if (!JwtUtils.validateToken(token))
             throw new BusinessException(GlobalResultCode.JWT_TOKEN_ERROR);
 
-        String operNo = JwtUtils.getSubject(token);
+        String operNo = JwtUtils.getOperNo(token);
         String operNoCache = cacheService.get(CacheModule.TOKEN, token);
         if (!Strings.CS.equals(operNo, operNoCache))
             throw new BusinessException(GlobalResultCode.JWT_OPER_NO_ERROR);
 
+        cacheService.expire(CacheModule.TOKEN, token, Duration.ofSeconds(jwtConfig.getExpire()));
         return true;
     }
 }
