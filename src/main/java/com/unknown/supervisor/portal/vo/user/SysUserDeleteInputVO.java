@@ -1,4 +1,4 @@
-package com.unknown.supervisor.portal.vo;
+package com.unknown.supervisor.portal.vo.user;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
@@ -12,7 +12,7 @@ import java.util.List;
  * @author zhongkunming
  */
 @Data
-public class SysUserDeleteVO {
+public class SysUserDeleteInputVO {
 
     /**
      * 主键ID

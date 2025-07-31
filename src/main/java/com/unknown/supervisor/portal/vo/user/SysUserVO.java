@@ -1,14 +1,22 @@
-package com.unknown.supervisor.portal.vo;
+package com.unknown.supervisor.portal.vo.user;
 
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 /**
- * 创建用户VO
+ * 用户VO
  *
  * @author zhongkunming
  */
 @Data
-public class SysUserCreateVO {
+public class SysUserVO {
+
+    /**
+     * 主键ID
+     */
+    private Long id;
+
     /**
      * 操作员号
      */
@@ -45,14 +53,29 @@ public class SysUserCreateVO {
     private String avatar;
 
     /**
-     * 密码
-     */
-    private String password;
-
-    /**
      * 账号状态（0正常 1停用）
      */
     private String status;
+
+    /**
+     * 删除标志
+     */
+    private Boolean isDelete;
+
+    /**
+     * 密码最后更新时间
+     */
+    private LocalDateTime pwdUpdateDate;
+
+    /**
+     * 创建时间
+     */
+    private LocalDateTime createDt;
+
+    /**
+     * 更新时间
+     */
+    private LocalDateTime updateDt;
 
     /**
      * 备注

@@ -1,4 +1,4 @@
-package com.unknown.supervisor.portal.vo;
+package com.unknown.supervisor.portal.vo.user;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
@@ -10,7 +10,7 @@ import lombok.Data;
  * @author zhongkunming
  */
 @Data
-public class SysUserGetVO {
+public class SysUserGetInputVO {
 
     /**
      * 主键ID

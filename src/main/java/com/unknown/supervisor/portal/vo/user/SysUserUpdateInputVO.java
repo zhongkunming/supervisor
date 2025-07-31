@@ -1,23 +1,22 @@
-package com.unknown.supervisor.portal.vo;
+package com.unknown.supervisor.portal.vo.user;
 
-import com.unknown.supervisor.core.common.PageRequest;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-
-import java.time.LocalDateTime;
 
 /**
- * 查询用户VO
+ * 更新用户VO
  *
  * @author zhongkunming
  */
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class SysUserQueryVO extends PageRequest {
+public class SysUserUpdateInputVO {
 
     /**
      * 主键ID
      */
+    @NotNull(message = "用户ID不能为空")
+    @Schema(description = "用户ID", requiredMode = Schema.RequiredMode.REQUIRED)
     private Long id;
 
     /**
@@ -56,19 +55,14 @@ public class SysUserQueryVO extends PageRequest {
     private String avatar;
 
     /**
+     * 密码
+     */
+    private String password;
+
+    /**
      * 账号状态（0正常 1停用）
      */
     private String status;
-
-    /**
-     * 创建时间
-     */
-    private LocalDateTime createDt;
-
-    /**
-     * 更新时间
-     */
-    private LocalDateTime updateDt;
 
     /**
      * 备注

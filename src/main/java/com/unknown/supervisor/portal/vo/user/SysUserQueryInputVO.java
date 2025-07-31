@@ -1,16 +1,19 @@
-package com.unknown.supervisor.portal.dto;
+package com.unknown.supervisor.portal.vo.user;
 
+import com.unknown.supervisor.core.common.PageRequest;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;
 
 /**
- * 用户信息DTO
+ * 查询用户VO
  *
  * @author zhongkunming
  */
 @Data
-public class SysUserDTO {
+@EqualsAndHashCode(callSuper = true)
+public class SysUserQueryInputVO extends PageRequest {
 
     /**
      * 主键ID
@@ -53,39 +56,14 @@ public class SysUserDTO {
     private String avatar;
 
     /**
-     * 密码
-     */
-    private String password;
-
-    /**
      * 账号状态（0正常 1停用）
      */
     private String status;
 
     /**
-     * 删除标志
-     */
-    private Boolean isDelete;
-
-    /**
-     * 密码最后更新时间
-     */
-    private LocalDateTime pwdUpdateDate;
-
-    /**
-     * 创建人
-     */
-    private String createOperNo;
-
-    /**
      * 创建时间
      */
     private LocalDateTime createDt;
-
-    /**
-     * 更新人
-     */
-    private String updateOperNo;
 
     /**
      * 更新时间

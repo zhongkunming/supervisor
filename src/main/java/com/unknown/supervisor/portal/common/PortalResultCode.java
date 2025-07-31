@@ -38,11 +38,20 @@ public enum PortalResultCode implements ResultCode {
     DICT_TYPE_ALREADY_EXISTS("44002", "字典类型已存在: {0}"),
     DICT_DATA_NOT_FOUND("44003", "字典数据不存在"),
     DICT_DATA_ALREADY_EXISTS("44004", "字典数据已存在: {0}"),
+    DICT_TYPE_IN_USE("44005", "字典类型正在使用中，无法删除"),
 
     // 配置相关错误码 45xxx
     CONFIG_NOT_FOUND("45001", "配置不存在"),
     CONFIG_ALREADY_EXISTS("45002", "配置已存在: {0}"),
     CONFIG_KEY_INVALID("45003", "配置键名无效"),
+
+    // 用户角色关联相关错误码 47xxx
+    USER_ROLE_NOT_FOUND("47001", "用户角色关联不存在"),
+    USER_ROLE_ALREADY_EXISTS("47002", "用户角色关联已存在"),
+
+    // 角色菜单关联相关错误码 48xxx
+    ROLE_MENU_NOT_FOUND("48001", "角色菜单关联不存在"),
+    ROLE_MENU_ALREADY_EXISTS("48002", "角色菜单关联已存在"),
 
     // 权限相关错误码 46xxx
     LOGIN_FAILED("46001", "登录失败"),

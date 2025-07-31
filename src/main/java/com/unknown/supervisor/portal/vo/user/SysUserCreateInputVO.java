@@ -1,24 +1,14 @@
-package com.unknown.supervisor.portal.vo;
+package com.unknown.supervisor.portal.vo.user;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 /**
- * 更新用户VO
+ * 创建用户VO
  *
  * @author zhongkunming
  */
 @Data
-public class SysUserUpdateVO {
-
-    /**
-     * 主键ID
-     */
-    @NotNull(message = "用户ID不能为空")
-    @Schema(description = "用户ID", requiredMode = Schema.RequiredMode.REQUIRED)
-    private Long id;
-
+public class SysUserCreateInputVO {
     /**
      * 操作员号
      */

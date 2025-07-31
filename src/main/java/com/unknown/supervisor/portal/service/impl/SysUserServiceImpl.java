@@ -5,11 +5,11 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.unknown.supervisor.core.common.PageResult;
 import com.unknown.supervisor.core.exception.BusinessException;
 import com.unknown.supervisor.portal.common.PortalResultCode;
-import com.unknown.supervisor.portal.dto.SysUserDTO;
+import com.unknown.supervisor.portal.dto.user.SysUserDTO;
 import com.unknown.supervisor.portal.entity.SysUser;
 import com.unknown.supervisor.portal.mapper.SysUserMapper;
 import com.unknown.supervisor.portal.service.SysUserService;
-import com.unknown.supervisor.portal.vo.*;
+import com.unknown.supervisor.portal.vo.user.*;
 import com.unknown.supervisor.utils.BeanUtils;
 import com.unknown.supervisor.utils.PasswdUtils;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +35,7 @@ public class SysUserServiceImpl implements SysUserService {
     private final SysUserMapper sysUserMapper;
 
     @Override
-    public PageResult<SysUserVO> pageQuery(SysUserQueryVO inputVO) {
+    public PageResult<SysUserVO> pageQuery(SysUserQueryInputVO inputVO) {
         Page<SysUser> page = inputVO.toPage();
         LambdaQueryWrapper<SysUser> wrapper = new LambdaQueryWrapper<>();
         sysUserMapper.selectPage(page, wrapper);
@@ -43,7 +43,7 @@ public class SysUserServiceImpl implements SysUserService {
     }
 
     @Override
-    public SysUserVO getById(SysUserGetVO inputVO) {
+    public SysUserVO getById(SysUserGetInputVO inputVO) {
         Long id = inputVO.getId();
         SysUser user = sysUserMapper.selectById(id);
         if (Objects.isNull(user)) {
@@ -54,7 +54,7 @@ public class SysUserServiceImpl implements SysUserService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void createUser(SysUserCreateVO inputVO) {
+    public void createUser(SysUserCreateInputVO inputVO) {
         // 检查操作员号是否已存在
         String operNo = inputVO.getOperNo();
         LambdaQueryWrapper<SysUser> wrapper = new LambdaQueryWrapper<>();
@@ -71,7 +71,7 @@ public class SysUserServiceImpl implements SysUserService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void updateUser(SysUserUpdateVO inputVO) {
+    public void updateUser(SysUserUpdateInputVO inputVO) {
         Long id = inputVO.getId();
         SysUser existUser = sysUserMapper.selectById(id);
         if (Objects.isNull(existUser)) {
@@ -98,7 +98,7 @@ public class SysUserServiceImpl implements SysUserService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void deleteUser(SysUserDeleteVO inputVO) {
+    public void deleteUser(SysUserDeleteInputVO inputVO) {
         sysUserMapper.deleteByIds(inputVO.getIds());
     }
 

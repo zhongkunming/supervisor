@@ -1,16 +1,16 @@
-package com.unknown.supervisor.portal.vo;
+package com.unknown.supervisor.portal.dto.user;
 
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
 /**
- * 用户VO
+ * 用户信息DTO
  *
  * @author zhongkunming
  */
 @Data
-public class SysUserVO {
+public class SysUserDTO {
 
     /**
      * 主键ID
@@ -53,6 +53,11 @@ public class SysUserVO {
     private String avatar;
 
     /**
+     * 密码
+     */
+    private String password;
+
+    /**
      * 账号状态（0正常 1停用）
      */
     private String status;
@@ -68,9 +73,19 @@ public class SysUserVO {
     private LocalDateTime pwdUpdateDate;
 
     /**
+     * 创建人
+     */
+    private String createOperNo;
+
+    /**
      * 创建时间
      */
     private LocalDateTime createDt;
+
+    /**
+     * 更新人
+     */
+    private String updateOperNo;
 
     /**
      * 更新时间
