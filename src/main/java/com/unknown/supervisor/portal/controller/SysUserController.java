@@ -3,7 +3,7 @@ package com.unknown.supervisor.portal.controller;
 import com.unknown.supervisor.core.common.JsonResult;
 import com.unknown.supervisor.core.common.PageResult;
 import com.unknown.supervisor.portal.service.SysUserService;
-import com.unknown.supervisor.portal.vo.user.*;
+import com.unknown.supervisor.portal.vo.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -13,54 +13,51 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
-@Tag(name = "系统用户管理")
+/**
+ * 用户信息Controller
+ *
+ * @author zhongkunming
+ */
 @RestController
 @RequestMapping("/sys/user")
 @RequiredArgsConstructor
+@Tag(name = "用户管理", description = "用户管理")
 public class SysUserController {
 
     private final SysUserService sysUserService;
 
-    @Operation(summary = "分页查询用户")
-    @PostMapping("/query")
-    public JsonResult<PageResult<SysUserVO>> queryUsers(@Valid @RequestBody SysUserQueryInputVO queryInputVO) {
-        PageResult<SysUserVO> pageResult = sysUserService.pageUsers(queryInputVO);
-        return JsonResult.success(pageResult);
+    @PostMapping("/pageQuery")
+    @Operation(summary = "分页查询用户列表")
+    public JsonResult<PageResult<SysUserVO>> pageQuery(@Valid @RequestBody SysUserQueryVO inputVO) {
+        PageResult<SysUserVO> result = sysUserService.pageQuery(inputVO);
+        return JsonResult.success(result);
     }
 
-    @Operation(summary = "根据ID查询用户")
-    @PostMapping("/get")
-    public JsonResult<SysUserVO> getUserById(@Valid @RequestBody SysUserGetByIdInputVO getByIdInputVO) {
-        SysUserVO userVO = sysUserService.getUserById(getByIdInputVO.getId());
-        return JsonResult.success(userVO);
+    @PostMapping("/getById")
+    @Operation(summary = "根据ID查询用户信息")
+    public JsonResult<SysUserVO> getById(@Valid @RequestBody SysUserGetVO inputVO) {
+        SysUserVO result = sysUserService.getById(inputVO);
+        return JsonResult.success(result);
     }
 
-    @Operation(summary = "创建用户")
-    @PostMapping("/create")
-    public JsonResult<Void> createUser(@Valid @RequestBody SysUserCreateInputVO createInputVO) {
-        sysUserService.createUser(createInputVO);
+    @PostMapping("createUser")
+    @Operation(summary = "新增用户")
+    public JsonResult<Void> createUser(@Valid @RequestBody SysUserCreateVO inputVO) {
+        sysUserService.createUser(inputVO);
         return JsonResult.success();
     }
 
-    @Operation(summary = "更新用户")
-    @PostMapping("/update")
-    public JsonResult<Void> updateUser(@Valid @RequestBody SysUserUpdateInputVO updateInputVO) {
-        sysUserService.updateUser(updateInputVO);
+    @PostMapping("updateUser")
+    @Operation(summary = "修改用户")
+    public JsonResult<Void> updateUser(@Valid @RequestBody SysUserUpdateVO inputVO) {
+        sysUserService.updateUser(inputVO);
         return JsonResult.success();
     }
 
+    @PostMapping("/deleteUser")
     @Operation(summary = "删除用户")
-    @PostMapping("/delete")
-    public JsonResult<Void> deleteUser(@Valid @RequestBody SysUserDeleteInputVO deleteVO) {
-        sysUserService.deleteUser(deleteVO.getId());
-        return JsonResult.success();
-    }
-
-    @Operation(summary = "启用/禁用用户")
-    @PostMapping("/status")
-    public JsonResult<Void> updateUserStatus(@Valid @RequestBody SysUserStatusInputVO statusVO) {
-        sysUserService.updateUserStatus(statusVO.getId(), statusVO.getStatus());
+    public JsonResult<Void> deleteUser(@Valid @RequestBody SysUserDeleteVO inputVO) {
+        sysUserService.deleteUser(inputVO);
         return JsonResult.success();
     }
 }

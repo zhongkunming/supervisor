@@ -1,25 +1,20 @@
-package com.unknown.supervisor.portal.entity;
+package com.unknown.supervisor.portal.dto;
 
-import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;
 
 /**
- * 用户信息表
+ * 用户信息DTO
  *
  * @author zhongkunming
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
-@TableName("sys_user")
-public class SysUser {
+public class SysUserDTO {
 
     /**
      * 主键ID
      */
-    @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
     /**
@@ -80,25 +75,21 @@ public class SysUser {
     /**
      * 创建人
      */
-    @TableField(fill = FieldFill.INSERT)
     private String createOperNo;
 
     /**
      * 创建时间
      */
-    @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createDt;
 
     /**
      * 更新人
      */
-    @TableField(fill = FieldFill.INSERT_UPDATE)
     private String updateOperNo;
 
     /**
      * 更新时间
      */
-    @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updateDt;
 
     /**

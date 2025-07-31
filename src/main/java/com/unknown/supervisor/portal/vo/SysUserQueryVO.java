@@ -1,25 +1,23 @@
-package com.unknown.supervisor.portal.entity;
+package com.unknown.supervisor.portal.vo;
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.unknown.supervisor.core.common.PageRequest;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;
 
 /**
- * 用户信息表
+ * 查询用户VO
  *
  * @author zhongkunming
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
-@TableName("sys_user")
-public class SysUser {
+@EqualsAndHashCode(callSuper = true)
+public class SysUserQueryVO extends PageRequest {
 
     /**
      * 主键ID
      */
-    @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
     /**
@@ -58,47 +56,18 @@ public class SysUser {
     private String avatar;
 
     /**
-     * 密码
-     */
-    private String password;
-
-    /**
      * 账号状态（0正常 1停用）
      */
     private String status;
 
     /**
-     * 删除标志
-     */
-    private Boolean isDelete;
-
-    /**
-     * 密码最后更新时间
-     */
-    private LocalDateTime pwdUpdateDate;
-
-    /**
-     * 创建人
-     */
-    @TableField(fill = FieldFill.INSERT)
-    private String createOperNo;
-
-    /**
      * 创建时间
      */
-    @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createDt;
-
-    /**
-     * 更新人
-     */
-    @TableField(fill = FieldFill.INSERT_UPDATE)
-    private String updateOperNo;
 
     /**
      * 更新时间
      */
-    @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updateDt;
 
     /**

@@ -13,23 +13,46 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum PortalResultCode implements ResultCode {
 
-    // 用户相关错误 41xxx
+    // 用户相关错误码 41xxx
     USER_NOT_FOUND("41001", "用户不存在"),
-    USER_ALREADY_EXISTS("41002", "用户已存在"),
-    USER_PASSWORD_INCORRECT("41003", "密码错误"),
-    USER_ACCOUNT_LOCKED("41004", "用户账户已锁定"),
+    USER_ALREADY_EXISTS("41002", "用户已存在: {0}"),
+    USER_STATUS_INVALID("41003", "用户状态无效"),
+    USER_PASSWORD_ERROR("41004", "密码错误"),
+    USER_ACCOUNT_DISABLED("41005", "账户已被禁用"),
+    USER_ACCOUNT_DELETED("41006", "账户已被删除"),
 
-    // 角色相关错误 42xxx
+    // 角色相关错误码 42xxx
     ROLE_NOT_FOUND("42001", "角色不存在"),
-    ROLE_CODE_EXISTS("42002", "角色编码已存在"),
+    ROLE_ALREADY_EXISTS("42002", "角色已存在: {0}"),
+    ROLE_IN_USE("42003", "角色正在使用中，无法删除"),
+    ROLE_CODE_INVALID("42004", "角色编码无效"),
 
-    // 菜单相关错误 43xxx
+    // 菜单相关错误码 43xxx
     MENU_NOT_FOUND("43001", "菜单不存在"),
-    MENU_CODE_EXISTS("43002", "菜单编码已存在"),
+    MENU_ALREADY_EXISTS("43002", "菜单已存在: {0}"),
     MENU_HAS_CHILDREN("43003", "菜单存在子菜单，无法删除"),
+    MENU_PARENT_NOT_FOUND("43004", "父菜单不存在"),
+
+    // 字典相关错误码 44xxx
+    DICT_TYPE_NOT_FOUND("44001", "字典类型不存在"),
+    DICT_TYPE_ALREADY_EXISTS("44002", "字典类型已存在: {0}"),
+    DICT_DATA_NOT_FOUND("44003", "字典数据不存在"),
+    DICT_DATA_ALREADY_EXISTS("44004", "字典数据已存在: {0}"),
+
+    // 配置相关错误码 45xxx
+    CONFIG_NOT_FOUND("45001", "配置不存在"),
+    CONFIG_ALREADY_EXISTS("45002", "配置已存在: {0}"),
+    CONFIG_KEY_INVALID("45003", "配置键名无效"),
+
+    // 权限相关错误码 46xxx
+    LOGIN_FAILED("46001", "登录失败"),
+    LOGIN_USER_NOT_FOUND("46002", "登录用户不存在"),
+    LOGIN_PASSWORD_ERROR("46003", "用户名或密码错误"),
+    LOGOUT_FAILED("46004", "退出登录失败"),
+    PERMISSION_DENIED("46005", "权限不足"),
+    TOKEN_EXPIRED("46006", "登录已过期，请重新登录"),
     ;
 
     private final String code;
-
     private final String msg;
 }

@@ -1,55 +1,49 @@
 package com.unknown.supervisor.portal.service;
 
 import com.unknown.supervisor.core.common.PageResult;
-import com.unknown.supervisor.portal.dto.user.SysUserDTO;
-import com.unknown.supervisor.portal.vo.user.SysUserCreateInputVO;
-import com.unknown.supervisor.portal.vo.user.SysUserQueryInputVO;
-import com.unknown.supervisor.portal.vo.user.SysUserUpdateInputVO;
-import com.unknown.supervisor.portal.vo.user.SysUserVO;
+import com.unknown.supervisor.portal.vo.*;
 
+/**
+ * 用户信息Service接口
+ *
+ * @author zhongkunming
+ */
 public interface SysUserService {
 
-    // ========== Controller层调用的公共方法 ==========
+    /**
+     * 分页查询用户列表
+     *
+     * @param inputVO 查询条件
+     * @return 用户列表
+     */
+    PageResult<SysUserVO> pageQuery(SysUserQueryVO inputVO);
 
     /**
-     * 分页查询用户
+     * 根据ID查询用户信息
+     *
+     * @param inputVO 查询用户
+     * @return 用户信息
      */
-    PageResult<SysUserVO> pageUsers(SysUserQueryInputVO queryInputVO);
+    SysUserVO getById(SysUserGetVO inputVO);
 
     /**
-     * 根据ID查询用户
+     * 新增用户
+     *
+     * @param inputVO 用户信息
      */
-    SysUserVO getUserById(Long id);
+    void createUser(SysUserCreateVO inputVO);
 
     /**
-     * 创建用户
+     * 修改用户
+     *
+     * @param inputVO 用户信息
      */
-    void createUser(SysUserCreateInputVO createInputVO);
-
-    /**
-     * 更新用户
-     */
-    void updateUser(SysUserUpdateInputVO updateInputVO);
+    void updateUser(SysUserUpdateVO inputVO);
 
     /**
      * 删除用户
+     *
+     * @param inputVO 用户ID列表
      */
-    void deleteUser(Long id);
-
-    /**
-     * 启用/禁用用户
-     */
-    void updateUserStatus(Long id, Integer status);
-
-    // ========== 内部使用的方法 ==========
-
-    /**
-     * 根据操作员编号查询用户
-     */
-    SysUserDTO getUserByOperNo(String operNo);
-
-    /**
-     * 根据用户名查询用户
-     */
-    SysUserDTO getUserByUsername(String username);
+    void deleteUser(SysUserDeleteVO inputVO);
 }
