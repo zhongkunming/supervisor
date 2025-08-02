@@ -44,7 +44,7 @@ public class MyBatisPlusMetaObjectHandler implements MetaObjectHandler {
     }
 
     /**
-     * 获取当前操作员编号
+     * 获取当前操作员
      */
     private String getCurrentOperNo() {
         try {

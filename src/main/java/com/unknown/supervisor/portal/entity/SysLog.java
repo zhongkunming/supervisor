@@ -50,11 +50,11 @@ public class SysLog {
     @Schema(description = "用户代理")
     private String userAgent;
 
-    @Schema(description = "操作员编号")
+    @Schema(description = "操作员")
     private String operNo;
 
     @TableField(fill = FieldFill.INSERT)
-    @Schema(description = "创建操作员编号")
+    @Schema(description = "创建人")
     private String createOperNo;
 
     @TableField(fill = FieldFill.INSERT)
@@ -62,7 +62,7 @@ public class SysLog {
     private LocalDateTime createDt;
 
     @TableField(fill = FieldFill.INSERT_UPDATE)
-    @Schema(description = "更新操作员编号")
+    @Schema(description = "更新人")
     private String updateOperNo;
 
     @TableField(fill = FieldFill.INSERT_UPDATE)
