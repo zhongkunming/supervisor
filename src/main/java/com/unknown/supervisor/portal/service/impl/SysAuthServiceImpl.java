@@ -1,17 +1,14 @@
 package com.unknown.supervisor.portal.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.unknown.supervisor.config.JwtConfig;
 import com.unknown.supervisor.core.cache.CacheModule;
 import com.unknown.supervisor.core.cache.CacheService;
 import com.unknown.supervisor.core.exception.BusinessException;
 import com.unknown.supervisor.portal.common.PortalResultCode;
-import com.unknown.supervisor.portal.entity.*;
-import com.unknown.supervisor.portal.mapper.SysMenuMapper;
-import com.unknown.supervisor.portal.mapper.SysRoleMapper;
-import com.unknown.supervisor.portal.mapper.SysRoleMenuMapper;
-import com.unknown.supervisor.portal.mapper.SysUserRoleMapper;
+import com.unknown.supervisor.portal.entity.SysMenu;
+import com.unknown.supervisor.portal.entity.SysUser;
 import com.unknown.supervisor.portal.service.SysAuthService;
+import com.unknown.supervisor.portal.service.SysPermService;
 import com.unknown.supervisor.portal.service.SysUserService;
 import com.unknown.supervisor.portal.vo.auth.LoginInputVO;
 import com.unknown.supervisor.portal.vo.auth.LoginOutputVO;
@@ -22,16 +19,16 @@ import com.unknown.supervisor.utils.JwtUtils;
 import com.unknown.supervisor.utils.PasswdUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Strings;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
+
+import static org.apache.commons.lang3.Strings.CS;
 
 /**
  * 权限认证Service实现类
@@ -46,10 +43,7 @@ public class SysAuthServiceImpl implements SysAuthService {
     private final JwtConfig jwtConfig;
     private final CacheService cacheService;
     private final SysUserService sysUserService;
-    private final SysUserRoleMapper sysUserRoleMapper;
-    private final SysRoleMapper sysRoleMapper;
-    private final SysRoleMenuMapper sysRoleMenuMapper;
-    private final SysMenuMapper sysMenuMapper;
+    private final SysPermService sysPermService;
 
     @Override
     public LoginOutputVO login(LoginInputVO inputVO) {
@@ -63,7 +57,7 @@ public class SysAuthServiceImpl implements SysAuthService {
         }
 
         // 检查用户状态
-        if (!Strings.CS.equals(sysUser.getStatus(), "0")) {
+        if (!CS.equals(sysUser.getStatus(), "0")) {
             throw new BusinessException(PortalResultCode.USER_DISABLED);
         }
 
@@ -97,22 +91,17 @@ public class SysAuthServiceImpl implements SysAuthService {
     @Override
     public UserInfoOutputVO getUserInfo() {
         String operNo = JwtUtils.getOperNo();
-
         // 查询用户信息
         SysUser sysUser = sysUserService.getUserByOperNo(operNo);
         if (Objects.isNull(sysUser)) {
             throw new BusinessException(PortalResultCode.USER_NOT_FOUND);
         }
-
-        UserInfoOutputVO outputVO = BeanUtils.copyProperties(sysUser, UserInfoOutputVO::new);
+        UserInfoOutputVO outputVO = new UserInfoOutputVO();
+        outputVO.setUser(BeanUtils.copyProperties(sysUser, UserInfoOutputVO.UserVO::new));
         // 获取用户角色
-        List<String> roles = getUserRoles(operNo);
-        outputVO.setRoles(roles);
-
-        // 获取用户权限
-        List<String> permissions = getUserPermissions(operNo);
-        outputVO.setPermissions(permissions);
-
+        outputVO.setRoles(sysPermService.getRolePerms(operNo));
+        // 获取菜单权限
+        outputVO.setPermissions(sysPermService.getMenuPerms(operNo));
         return outputVO;
     }
 
@@ -121,95 +110,11 @@ public class SysAuthServiceImpl implements SysAuthService {
         String operNo = JwtUtils.getOperNo();
 
         // 获取用户菜单权限
-        List<SysMenu> menus = getUserMenus(operNo);
-
+        List<SysMenu> menus = sysPermService.getUserMenus(operNo);
+        // 先构建菜单树结构
+        List<SysMenu> menusTree = sysPermService.buildMenusToTree(menus);
         // 构建路由树
-        return buildRouters(menus);
-    }
-
-    /**
-     * 获取用户角色列表
-     */
-    private List<String> getUserRoles(String operNo) {
-        // 查询用户角色关联
-        LambdaQueryWrapper<SysUserRole> userRoleWrapper = new LambdaQueryWrapper<>();
-        userRoleWrapper.eq(SysUserRole::getOperNo, operNo);
-        List<SysUserRole> userRoles = sysUserRoleMapper.selectList(userRoleWrapper);
-
-        if (userRoles.isEmpty()) {
-            return new ArrayList<>();
-        }
-
-        // 获取角色编码列表
-        List<String> roleCodes = userRoles.stream()
-                .map(SysUserRole::getRoleCode)
-                .collect(Collectors.toList());
-
-        // 查询角色信息
-        LambdaQueryWrapper<SysRole> roleWrapper = new LambdaQueryWrapper<>();
-        roleWrapper.in(SysRole::getCode, roleCodes)
-                .eq(SysRole::getStatus, "0")
-                .eq(SysRole::getIsDelete, false);
-        List<SysRole> roles = sysRoleMapper.selectList(roleWrapper);
-
-        return roles.stream()
-                .map(SysRole::getKey)
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * 获取用户权限列表
-     */
-    private List<String> getUserPermissions(String operNo) {
-        List<SysMenu> menus = getUserMenus(operNo);
-
-        return menus.stream()
-                .map(SysMenu::getPerms)
-                .filter(StringUtils::isNotBlank)
-                .distinct()
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * 获取用户菜单列表
-     */
-    private List<SysMenu> getUserMenus(String operNo) {
-        // 查询用户角色关联
-        LambdaQueryWrapper<SysUserRole> userRoleWrapper = new LambdaQueryWrapper<>();
-        userRoleWrapper.eq(SysUserRole::getOperNo, operNo);
-        List<SysUserRole> userRoles = sysUserRoleMapper.selectList(userRoleWrapper);
-
-        if (userRoles.isEmpty()) {
-            return new ArrayList<>();
-        }
-
-        // 获取角色编码列表
-        List<String> roleCodes = userRoles.stream()
-                .map(SysUserRole::getRoleCode)
-                .collect(Collectors.toList());
-
-        // 查询角色菜单关联
-        LambdaQueryWrapper<SysRoleMenu> roleMenuWrapper = new LambdaQueryWrapper<>();
-        roleMenuWrapper.in(SysRoleMenu::getRoleCode, roleCodes);
-        List<SysRoleMenu> roleMenus = sysRoleMenuMapper.selectList(roleMenuWrapper);
-
-        if (roleMenus.isEmpty()) {
-            return new ArrayList<>();
-        }
-
-        // 获取菜单编码列表
-        List<String> menuCodes = roleMenus.stream()
-                .map(SysRoleMenu::getMenuCode)
-                .distinct()
-                .collect(Collectors.toList());
-
-        // 查询菜单信息
-        LambdaQueryWrapper<SysMenu> menuWrapper = new LambdaQueryWrapper<>();
-        menuWrapper.in(SysMenu::getCode, menuCodes)
-                .eq(SysMenu::getStatus, "0")
-                .orderByAsc(SysMenu::getOrderNum);
-
-        return sysMenuMapper.selectList(menuWrapper);
+        return buildRouters(menusTree);
     }
 
     /**
@@ -217,58 +122,158 @@ public class SysAuthServiceImpl implements SysAuthService {
      */
     private List<RouterOutputVO> buildRouters(List<SysMenu> menus) {
         List<RouterOutputVO> routers = new ArrayList<>();
+        for (SysMenu menu : menus) {
+            RouterOutputVO router = new RouterOutputVO();
+            router.setHidden("1".equals(menu.getVisible()));
+            router.setName(getRouteName(menu));
+            router.setPath(getRouterPath(menu));
+            router.setComponent(getComponent(menu));
+            router.setQuery(menu.getQuery());
 
-        // 先找出所有的父级菜单
-        List<SysMenu> rootMenus = menus.stream()
-                .filter(menu -> Objects.isNull(menu.getPcode()) || Strings.CS.equals(menu.getPcode(), "0"))
-                .sorted(Comparator.comparing(SysMenu::getOrderNum))
-                .toList();
+            // 构建meta信息
+            RouterOutputVO.MetaVO meta = new RouterOutputVO.MetaVO();
+            meta.setTitle(menu.getName());
+            meta.setIcon(menu.getIcon());
+            meta.setIsCache(menu.getIsCache());
+            if (isHttpUrl(menu.getPath())) meta.setLink(menu.getPath());
+            router.setMeta(meta);
+            List<SysMenu> menuChildren = menu.getChildren();
+            if (CollectionUtils.isNotEmpty(menuChildren) && CS.equals(menu.getType(), "M")) {
+                router.setAlwaysShow(true);
+                router.setRedirect("noRedirect");
+                router.setChildren(buildRouters(menuChildren));
+            } else if (isMenuFrame(menu)) {
+                router.setMeta(null);
+                List<RouterOutputVO> childrenList = new ArrayList<>();
+                RouterOutputVO children = new RouterOutputVO();
+                children.setPath(menu.getPath());
+                children.setComponent(menu.getComponent());
+                children.setName(getRouteName(menu.getRouteName(), menu.getPath()));
 
-        // 递归构建路由树
-        for (SysMenu rootMenu : rootMenus) {
-            RouterOutputVO router = buildRouter(rootMenu, menus);
+                RouterOutputVO.MetaVO childMeta = new RouterOutputVO.MetaVO();
+                childMeta.setTitle(menu.getName());
+                childMeta.setIcon(menu.getIcon());
+                childMeta.setIsCache(menu.getIsCache());
+                if (isHttpUrl(menu.getPath())) childMeta.setLink(menu.getPath());
+                children.setMeta(childMeta);
+                children.setQuery(menu.getQuery());
+                childrenList.add(children);
+                router.setChildren(childrenList);
+            } else if (CS.equals(menu.getPcode(), "0") && isInnerLink(menu)) {
+                RouterOutputVO.MetaVO linkMeta = new RouterOutputVO.MetaVO();
+                linkMeta.setTitle(menu.getName());
+                linkMeta.setIcon(menu.getIcon());
+                router.setMeta(linkMeta);
+                router.setPath("/");
+
+                List<RouterOutputVO> childrenList = new ArrayList<>();
+                RouterOutputVO children = new RouterOutputVO();
+                String routerPath = innerLinkReplaceEach(menu.getPath());
+                children.setPath(routerPath);
+                children.setComponent("InnerLink");
+                children.setName(getRouteName(menu.getRouteName(), routerPath));
+
+                RouterOutputVO.MetaVO innerMeta = new RouterOutputVO.MetaVO();
+                innerMeta.setTitle(menu.getName());
+                innerMeta.setIcon(menu.getIcon());
+                innerMeta.setLink(menu.getPath());
+                children.setMeta(innerMeta);
+                childrenList.add(children);
+                router.setChildren(childrenList);
+            }
             routers.add(router);
         }
-
         return routers;
     }
 
     /**
-     * 构建单个路由
+     * 获取路由名称
      */
-    private RouterOutputVO buildRouter(SysMenu menu, List<SysMenu> allMenus) {
-        RouterOutputVO router = new RouterOutputVO();
-        router.setName(menu.getRouteName());
-        router.setPath(menu.getPath());
-        router.setComponent(menu.getComponent());
-        router.setQuery(menu.getQuery());
-        router.setHidden("1".equals(menu.getVisible()));
-
-        // 构建meta信息
-        RouterOutputVO.MetaVO meta = new RouterOutputVO.MetaVO();
-        meta.setTitle(menu.getName());
-        meta.setIcon(menu.getIcon());
-        meta.setNoCache(!Boolean.TRUE.equals(menu.getIsCache()));
-        if (Boolean.TRUE.equals(menu.getIsFrame())) {
-            meta.setLink(menu.getPath());
+    private String getRouteName(SysMenu menu) {
+        // 非外链并且是一级目录（类型为目录）
+        if (isMenuFrame(menu)) {
+            return StringUtils.EMPTY;
         }
-        router.setMeta(meta);
+        return getRouteName(menu.getRouteName(), menu.getPath());
+    }
 
-        // 查找子菜单
-        List<SysMenu> childMenus = allMenus.stream()
-                .filter(childMenu -> Strings.CS.equals(childMenu.getPcode(), menu.getCode()))
-                .sorted(Comparator.comparing(SysMenu::getOrderNum))
-                .toList();
+    /**
+     * 获取路由名称，如没有配置路由名称则取路由地址
+     */
+    private String getRouteName(String name, String path) {
+        String routerName = StringUtils.isNotBlank(name) ? name : path;
+        return StringUtils.capitalize(routerName);
+    }
 
-        if (!childMenus.isEmpty()) {
-            List<RouterOutputVO> children = new ArrayList<>();
-            for (SysMenu childMenu : childMenus) {
-                RouterOutputVO childRouter = buildRouter(childMenu, allMenus);
-                children.add(childRouter);
-            }
-            router.setChildren(children);
+    /**
+     * 获取路由地址
+     */
+    private String getRouterPath(SysMenu menu) {
+        String routerPath = menu.getPath();
+        // 内链打开外网方式
+        if (!CS.equals(menu.getPcode(), "0") && isInnerLink(menu)) {
+            routerPath = innerLinkReplaceEach(routerPath);
         }
+        // 非外链并且是一级目录（类型为目录）
+        if (CS.equals(menu.getPcode(), "0") && CS.equals(menu.getType(), "M") && menu.getIsFrame()) {
+            routerPath = "/" + menu.getPath();
+        }
+        // 非外链并且是一级目录（类型为菜单）
+        else if (isMenuFrame(menu)) {
+            routerPath = "/";
+        }
+        return routerPath;
+    }
 
-        return router;
+    /**
+     * 获取组件信息
+     */
+    private String getComponent(SysMenu menu) {
+        String component = "Layout";
+        if (StringUtils.isNotBlank(menu.getComponent()) && !isMenuFrame(menu)) {
+            component = menu.getComponent();
+        } else if (StringUtils.isBlank(menu.getComponent()) && !CS.equals(menu.getPcode(), "0") && isInnerLink(menu)) {
+            component = "InnerLink";
+        } else if (StringUtils.isBlank(menu.getComponent()) && isParentView(menu)) {
+            component = "ParentView";
+        }
+        return component;
+    }
+
+    /**
+     * 是否为菜单内部跳转
+     */
+    private boolean isMenuFrame(SysMenu menu) {
+        return CS.equals(menu.getPcode(), "0") && CS.equals(menu.getType(), "C") && menu.getIsFrame();
+    }
+
+    /**
+     * 是否为parent_view组件
+     */
+    private boolean isParentView(SysMenu menu) {
+        return !CS.equals(menu.getPcode(), "0") && CS.equals(menu.getType(), "M");
+    }
+
+    /**
+     * 是否为内链组件
+     */
+    private boolean isInnerLink(SysMenu menu) {
+        return menu.getIsFrame() && isHttpUrl(menu.getPath());
+    }
+
+    /**
+     * 判断是否为http(s)://开头
+     */
+    private boolean isHttpUrl(String link) {
+        return CS.startsWithAny(link, "http://", "https://");
+    }
+
+    /**
+     * 内链域名特殊字符替换
+     */
+    private String innerLinkReplaceEach(String path) {
+        return StringUtils.replaceEach(path,
+                new String[]{"http://", "https://", "www.", ".", ":"},
+                new String[]{"", "", "", "/", "/"});
     }
 }

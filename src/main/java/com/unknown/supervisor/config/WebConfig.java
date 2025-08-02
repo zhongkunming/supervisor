@@ -25,17 +25,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     private final TokenInterceptor tokenInterceptor;
 
-    private final List<String> publicIgnoreUri = List.of(
-            "/doc.html",
-            "/favicon.ico",
-            "/error",
-            "/swagger-ui/index.html",
-            "/swagger-ui*/**",
-            "/webjars/**",
-            "/v3/api-docs",
-            "/v3/api-docs.yaml",
-            "/v3/api-docs/swagger-config"
-    );
+    private final List<String> publicIgnoreUri = List.of("/doc.html", "/favicon.ico", "/error", "/swagger-ui/index.html", "/swagger-ui*/**", "/webjars/**", "/v3/api-docs", "/v3/api-docs.yaml", "/v3/api-docs/swagger-config");
 
     private final List<String> ignoreLogUri = new ArrayList<>() {
         {
@@ -47,19 +37,16 @@ public class WebConfig implements WebMvcConfigurer {
         {
             addAll(publicIgnoreUri);
             add("/sys/auth/login");
+            add("/sys/auth/logout");
         }
     };
 
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(sysLogInterceptor)
-                .addPathPatterns("/**")
-                .excludePathPatterns(ignoreLogUri);
+        registry.addInterceptor(sysLogInterceptor).addPathPatterns("/**").excludePathPatterns(ignoreLogUri);
 
-        registry.addInterceptor(tokenInterceptor)
-                .addPathPatterns("/**")
-                .excludePathPatterns(ignoreTokenUri);
+        registry.addInterceptor(tokenInterceptor).addPathPatterns("/**").excludePathPatterns(ignoreTokenUri);
     }
 
     @Bean

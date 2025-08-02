@@ -1,5 +1,6 @@
 package com.unknown.supervisor.portal.vo.auth;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -12,6 +13,7 @@ import java.util.List;
  */
 @Data
 @Schema(description = "路由信息VO")
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class RouterOutputVO {
 
     /**
@@ -51,6 +53,12 @@ public class RouterOutputVO {
     private String redirect;
 
     /**
+     * 当你一个路由下面的 children 声明的路由大于1个时，自动会变成嵌套的模式--如组件页面
+     */
+    @Schema(description = "组件页面")
+    private Boolean alwaysShow;
+
+    /**
      * 路由元信息
      */
     @Schema(description = "路由元信息")
@@ -82,10 +90,10 @@ public class RouterOutputVO {
         private String icon;
 
         /**
-         * 是否不缓存
+         * 是否缓存
          */
-        @Schema(description = "是否不缓存")
-        private Boolean noCache;
+        @Schema(description = "是否缓存")
+        private Boolean isCache;
 
         /**
          * 内链地址

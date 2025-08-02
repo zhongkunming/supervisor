@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.unknown.supervisor.portal.mapper.SysPermMapper">
+    <select id="selectRolesByOperNo" resultType="com.unknown.supervisor.portal.entity.SysRole">
+        select r.*
+        from sys_role r
+                 inner join sys_user_role ur on ur.role_code = r.code
+                 inner join sys_user u on u.oper_no = ur.oper_no
+        where r.status = '0'
+          and u.status = '0'
+          and u.is_delete = false
+          and u.oper_no = #{operNo}
+    </select>
+
+    <select id="selectMenuPermsByOperNo" resultType="java.lang.String">
+        select distinct m.perms
+        from sys_menu m
+                 inner join sys_role_menu rm on rm.menu_code = m.code
+                 inner join sys_user_role ur on ur.role_code = rm.role_code
+                 inner join sys_role r on r.code = rm.role_code
+                 inner join sys_user u on u.oper_no = ur.oper_no
+        where m.perms is not null
+          and m.status = '0'
+          and r.status = '0'
+          and r.is_delete = false
+          and u.status = '0'
+          and u.is_delete = false
+          and u.oper_no = #{operNo}
+    </select>
+
+    <select id="selectMenusByOperNo" resultType="com.unknown.supervisor.portal.entity.SysMenu">
+        select distinct m.*
+        from sys_menu m
+                 inner join sys_role_menu rm on rm.menu_code = m.code
+                 inner join sys_user_role ur on ur.role_code = rm.role_code
+                 inner join sys_role r on r.code = rm.role_code
+                 inner join sys_user u on u.oper_no = ur.oper_no
+        where m.status = '0'
+          and m.type in ('M', 'C')
+          and r.status = '0'
+          and r.is_delete = false
+          and u.status = '0'
+          and u.is_delete = false
+          and u.oper_no = #{operNo}
+        order by m.pcode, m.order_num
+    </select>
+</mapper>
