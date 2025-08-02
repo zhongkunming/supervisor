@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 菜单权限表
@@ -58,7 +59,7 @@ public class SysMenu {
     private String routeName;
 
     /**
-     * 是否组件
+     * 是否内链
      */
     private Boolean isFrame;
 
@@ -125,4 +126,10 @@ public class SysMenu {
      * 备注
      */
     private String remark;
+
+    /**
+     * 子菜单列表
+     */
+    @TableField(exist = false)
+    private List<SysMenu> children;
 }

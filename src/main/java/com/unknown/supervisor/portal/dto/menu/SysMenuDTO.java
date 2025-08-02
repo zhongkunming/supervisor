@@ -53,7 +53,7 @@ public class SysMenuDTO {
     private String routeName;
 
     /**
-     * 是否组件
+     * 是否内链
      */
     private Boolean isFrame;
 

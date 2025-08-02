@@ -58,9 +58,9 @@ public class SysMenuQueryInputVO extends PageRequest {
     private String routeName;
 
     /**
-     * 是否组件
+     * 是否内链
      */
-    @Schema(description = "是否组件")
+    @Schema(description = "是否内链")
     private Boolean isFrame;
 
     /**

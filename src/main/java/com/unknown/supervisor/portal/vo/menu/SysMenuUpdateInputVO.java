@@ -38,7 +38,8 @@ public class SysMenuUpdateInputVO {
     /**
      * 父菜单编码
      */
-    @Schema(description = "父菜单编码")
+    @NotBlank(message = "父菜单编码不能为空")
+    @Schema(description = "父菜单编码", requiredMode = Schema.RequiredMode.REQUIRED)
     private String pcode;
 
     /**
@@ -66,9 +67,9 @@ public class SysMenuUpdateInputVO {
     private String routeName;
 
     /**
-     * 是否组件
+     * 是否内链
      */
-    @Schema(description = "是否组件")
+    @Schema(description = "是否内链")
     private Boolean isFrame;
 
     /**
