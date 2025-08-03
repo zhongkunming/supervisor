@@ -1,4 +1,4 @@
-package com.unknown.supervisor.portal.dto.dicttype;
+package com.unknown.supervisor.portal.dto.dict;
 
 import lombok.Data;
 
@@ -18,19 +18,14 @@ public class SysDictTypeDTO {
     private Long id;
 
     /**
-     * 字典编码
+     * 字典类型
      */
-    private String code;
+    private String type;
 
     /**
      * 字典名称
      */
     private String name;
-
-    /**
-     * 字典类型
-     */
-    private String type;
 
     /**
      * 状态（0正常 1停用）

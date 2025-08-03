@@ -1,14 +1,18 @@
 package com.unknown.supervisor.portal.service;
 
 import com.unknown.supervisor.core.common.PageResult;
-import com.unknown.supervisor.portal.vo.dicttype.*;
+import com.unknown.supervisor.portal.vo.dict.*;
+import com.unknown.supervisor.portal.vo.dictdata.SysDictDataQueryInputVO;
+import com.unknown.supervisor.portal.vo.dictdata.SysDictDataVO;
+
+import java.util.List;
 
 /**
  * 字典类型Service接口
  *
  * @author zhongkunming
  */
-public interface SysDictTypeService {
+public interface SysDictService {
 
     /**
      * 分页查询字典类型列表
@@ -16,7 +20,7 @@ public interface SysDictTypeService {
      * @param inputVO 查询条件
      * @return 字典类型列表
      */
-    PageResult<SysDictTypeVO> pageQuery(SysDictTypeQueryInputVO inputVO);
+    PageResult<SysDictTypeVO> pageQueryDictType(SysDictTypeQueryInputVO inputVO);
 
     /**
      * 根据ID查询字典类型信息
@@ -24,7 +28,7 @@ public interface SysDictTypeService {
      * @param inputVO 查询字典类型
      * @return 字典类型信息
      */
-    SysDictTypeVO getById(SysDictTypeGetInputVO inputVO);
+    SysDictTypeVO getTypeById(SysDictTypeGetInputVO inputVO);
 
     /**
      * 新增字典类型
@@ -46,4 +50,14 @@ public interface SysDictTypeService {
      * @param inputVO 字典类型ID列表
      */
     void deleteDictType(SysDictTypeDeleteInputVO inputVO);
+
+    void exportDictType(SysDictTypeExportInputVO inputVO);
+
+    void refreshCache();
+
+    List<SysDictDataVO> getDictData(SysDictDateListInputVO inputVO);
+
+    List<SysDictTypeVO> getDictTypeListAll();
+
+    PageResult<SysDictDataVO> pageQueryDictData(SysDictDataQueryInputVO inputVO);
 }

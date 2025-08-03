@@ -25,7 +25,7 @@ import static org.apache.commons.lang3.Strings.CS;
 public class SysPermServiceImpl implements SysPermService {
 
     private final static String ADMIN_ROLE_KEY = "admin";
-    private final static String ADMIN_PERMS = "*.*.*";
+    private final static String ADMIN_PERMS = "*:*:*";
     private final SysPermMapper sysPermMapper;
     private final SysMenuMapper sysMenuMapper;
 

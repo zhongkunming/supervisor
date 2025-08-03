@@ -73,6 +73,13 @@ public interface CacheService {
      */
     boolean delete(CacheModule module, String key);
 
+    /**
+     * 删除模块下所有匹配的缓存
+     *
+     * @param module  缓存模块
+     * @param pattern 匹配模式（不包含模块前缀）
+     */
+    void deleteByPattern(CacheModule module, String pattern);
 
     /**
      * 检查缓存是否存在（带模块）

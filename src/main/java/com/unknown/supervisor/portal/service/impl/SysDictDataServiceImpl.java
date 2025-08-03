@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.unknown.supervisor.core.common.PageResult;
 import com.unknown.supervisor.core.exception.BusinessException;
 import com.unknown.supervisor.portal.common.PortalResultCode;
-import com.unknown.supervisor.portal.dto.dictdata.SysDictDataDTO;
+import com.unknown.supervisor.portal.dto.dict.SysDictDataDTO;
 import com.unknown.supervisor.portal.entity.SysDictData;
 import com.unknown.supervisor.portal.entity.SysDictType;
 import com.unknown.supervisor.portal.mapper.SysDictDataMapper;
@@ -15,7 +15,6 @@ import com.unknown.supervisor.portal.vo.dictdata.*;
 import com.unknown.supervisor.utils.BeanUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,22 +38,21 @@ public class SysDictDataServiceImpl implements SysDictDataService {
         Page<SysDictData> page = inputVO.toPage();
         LambdaQueryWrapper<SysDictData> wrapper = new LambdaQueryWrapper<>();
 
-        // 构建查询条件
-        wrapper.eq(Objects.nonNull(inputVO.getId()), SysDictData::getId, inputVO.getId())
-                .like(StringUtils.isNotBlank(inputVO.getDictCode()), SysDictData::getDictCode, inputVO.getDictCode())
-                .eq(Objects.nonNull(inputVO.getOrderNum()), SysDictData::getOrderNum, inputVO.getOrderNum())
-                .like(StringUtils.isNotBlank(inputVO.getLabel()), SysDictData::getLabel, inputVO.getLabel())
-                .like(StringUtils.isNotBlank(inputVO.getValue()), SysDictData::getValue, inputVO.getValue())
-                .eq(StringUtils.isNotBlank(inputVO.getType()), SysDictData::getType, inputVO.getType())
-                .like(StringUtils.isNotBlank(inputVO.getCssClass()), SysDictData::getCssClass, inputVO.getCssClass())
-                .like(StringUtils.isNotBlank(inputVO.getListClass()), SysDictData::getListClass, inputVO.getListClass())
-                .eq(Objects.nonNull(inputVO.getIsDefault()), SysDictData::getIsDefault, inputVO.getIsDefault())
-                .eq(StringUtils.isNotBlank(inputVO.getStatus()), SysDictData::getStatus, inputVO.getStatus())
-                .ge(Objects.nonNull(inputVO.getCreateDt()), SysDictData::getCreateDt, inputVO.getCreateDt())
-                .le(Objects.nonNull(inputVO.getUpdateDt()), SysDictData::getUpdateDt, inputVO.getUpdateDt())
-                .like(StringUtils.isNotBlank(inputVO.getRemark()), SysDictData::getRemark, inputVO.getRemark())
-                .orderByAsc(SysDictData::getOrderNum)
-                .orderByDesc(SysDictData::getCreateDt);
+//        // 构建查询条件
+//        wrapper.eq(Objects.nonNull(inputVO.getId()), SysDictData::getId, inputVO.getId())
+//                .eq(StringUtils.isNotBlank(inputVO.getType()), SysDictData::getType, inputVO.getType())
+//                .like(StringUtils.isNotBlank(inputVO.getLabel()), SysDictData::getLabel, inputVO.getLabel())
+//                .like(StringUtils.isNotBlank(inputVO.getValue()), SysDictData::getValue, inputVO.getValue())
+//                .like(StringUtils.isNotBlank(inputVO.getCssClass()), SysDictData::getCssClass, inputVO.getCssClass())
+//                .like(StringUtils.isNotBlank(inputVO.getListClass()), SysDictData::getListClass, inputVO.getListClass())
+//                .eq(Objects.nonNull(inputVO.getIsDefault()), SysDictData::getIsDefault, inputVO.getIsDefault())
+//                .eq(StringUtils.isNotBlank(inputVO.getStatus()), SysDictData::getStatus, inputVO.getStatus())
+//                .eq(Objects.nonNull(inputVO.getOrderNum()), SysDictData::getOrderNum, inputVO.getOrderNum())
+//                .ge(Objects.nonNull(inputVO.getCreateDt()), SysDictData::getCreateDt, inputVO.getCreateDt())
+//                .le(Objects.nonNull(inputVO.getUpdateDt()), SysDictData::getUpdateDt, inputVO.getUpdateDt())
+//                .like(StringUtils.isNotBlank(inputVO.getRemark()), SysDictData::getRemark, inputVO.getRemark())
+//                .orderByAsc(SysDictData::getOrderNum)
+//                .orderByDesc(SysDictData::getCreateDt);
 
         sysDictDataMapper.selectPage(page, wrapper);
         return PageResult.trans(page, this::convertToVO);

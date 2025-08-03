@@ -1,4 +1,4 @@
-package com.unknown.supervisor.portal.dto.dictdata;
+package com.unknown.supervisor.portal.dto.dict;
 
 import lombok.Data;
 
@@ -18,14 +18,9 @@ public class SysDictDataDTO {
     private Long id;
 
     /**
-     * 字典编码
+     * 字典类型
      */
-    private String dictCode;
-
-    /**
-     * 字典排序
-     */
-    private Integer orderNum;
+    private String type;
 
     /**
      * 字典标签
@@ -36,11 +31,6 @@ public class SysDictDataDTO {
      * 字典键值
      */
     private String value;
-
-    /**
-     * 字典类型
-     */
-    private String type;
 
     /**
      * 样式属性（其他样式扩展）
@@ -61,6 +51,11 @@ public class SysDictDataDTO {
      * 状态（0正常 1停用）
      */
     private String status;
+
+    /**
+     * 字典排序
+     */
+    private Integer orderNum;
 
     /**
      * 创建人

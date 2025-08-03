@@ -1,11 +1,11 @@
-package com.unknown.supervisor.portal.vo.dicttype;
+package com.unknown.supervisor.portal.vo.dict;
 
 import com.unknown.supervisor.core.common.PageRequest;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 /**
  * 查询字典类型VO
@@ -18,16 +18,10 @@ import java.time.LocalDateTime;
 public class SysDictTypeQueryInputVO extends PageRequest {
 
     /**
-     * 主键ID
+     * 字典类型
      */
-    @Schema(description = "主键ID")
-    private Long id;
-
-    /**
-     * 字典编码
-     */
-    @Schema(description = "字典编码")
-    private String code;
+    @Schema(description = "字典类型")
+    private String type;
 
     /**
      * 字典名称
@@ -36,32 +30,20 @@ public class SysDictTypeQueryInputVO extends PageRequest {
     private String name;
 
     /**
-     * 字典类型
-     */
-    @Schema(description = "字典类型")
-    private String type;
-
-    /**
      * 状态（0正常 1停用）
      */
     @Schema(description = "状态（0正常 1停用）")
     private String status;
 
     /**
-     * 创建时间
+     * 创建时间-开始
      */
-    @Schema(description = "创建时间")
-    private LocalDateTime createDt;
+    @Schema(description = "创建时间开始")
+    private LocalDate createDtBegin;
 
     /**
-     * 更新时间
+     * 创建时间-结束
      */
-    @Schema(description = "更新时间")
-    private LocalDateTime updateDt;
-
-    /**
-     * 备注
-     */
-    @Schema(description = "备注")
-    private String remark;
+    @Schema(description = "创建时间结束")
+    private LocalDate createDtEnd;
 }

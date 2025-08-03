@@ -1,4 +1,4 @@
-package com.unknown.supervisor.portal.vo.dicttype;
+package com.unknown.supervisor.portal.vo.dict;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -21,22 +21,16 @@ public class SysDictTypeVO {
     private Long id;
 
     /**
-     * 字典编码
+     * 字典类型
      */
-    @Schema(description = "字典编码")
-    private String code;
+    @Schema(description = "字典类型")
+    private String type;
 
     /**
      * 字典名称
      */
     @Schema(description = "字典名称")
     private String name;
-
-    /**
-     * 字典类型
-     */
-    @Schema(description = "字典类型")
-    private String type;
 
     /**
      * 状态（0正常 1停用）

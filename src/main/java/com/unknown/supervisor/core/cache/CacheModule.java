@@ -18,6 +18,11 @@ public enum CacheModule {
     DEFAULT("default", "默认模块"),
 
     /**
+     * 默认模块
+     */
+    DICT("dict", "字典模块"),
+
+    /**
      * 令牌模块
      */
     TOKEN("token", "令牌模块");

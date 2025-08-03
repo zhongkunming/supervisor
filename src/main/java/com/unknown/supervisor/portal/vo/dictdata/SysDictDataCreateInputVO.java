@@ -14,16 +14,11 @@ import lombok.Data;
 public class SysDictDataCreateInputVO {
 
     /**
-     * 字典编码
+     * 字典类型
      */
-    @Schema(description = "字典编码")
-    private String dictCode;
-
-    /**
-     * 字典排序
-     */
-    @Schema(description = "字典排序")
-    private Integer orderNum;
+    @NotBlank(message = "字典类型不能为空")
+    @Schema(description = "字典类型", requiredMode = Schema.RequiredMode.REQUIRED)
+    private String type;
 
     /**
      * 字典标签
@@ -38,13 +33,6 @@ public class SysDictDataCreateInputVO {
     @NotBlank(message = "字典键值不能为空")
     @Schema(description = "字典键值", requiredMode = Schema.RequiredMode.REQUIRED)
     private String value;
-
-    /**
-     * 字典类型
-     */
-    @NotBlank(message = "字典类型不能为空")
-    @Schema(description = "字典类型", requiredMode = Schema.RequiredMode.REQUIRED)
-    private String type;
 
     /**
      * 样式属性（其他样式扩展）
@@ -69,6 +57,12 @@ public class SysDictDataCreateInputVO {
      */
     @Schema(description = "状态（0正常 1停用）")
     private String status;
+
+    /**
+     * 字典排序
+     */
+    @Schema(description = "字典排序")
+    private Integer orderNum;
 
     /**
      * 备注

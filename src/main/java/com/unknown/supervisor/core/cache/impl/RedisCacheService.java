@@ -61,7 +61,7 @@ public class RedisCacheService implements CacheService {
             }
             return t;
         } catch (Exception e) {
-            log.error("获取缓存失败，key: {}", key, e);
+            log.error("获取缓存失败，realKey: {}", realKey, e);
             return null;
         }
     }
@@ -85,7 +85,7 @@ public class RedisCacheService implements CacheService {
                 redisTemplate.opsForValue().set(realKey, value, duration);
             }
         } catch (Exception e) {
-            log.error("设置缓存失败，key: {}, value: {}, duration: {}", key, value, duration, e);
+            log.error("设置缓存失败，realKey: {}, value: {}, duration: {}", realKey, value, duration, e);
         }
     }
 
@@ -97,8 +97,22 @@ public class RedisCacheService implements CacheService {
         try {
             return redisTemplate.delete(realKey);
         } catch (Exception e) {
-            log.error("删除缓存失败，key: {}", key, e);
+            log.error("删除缓存失败，realKey: {}", realKey, e);
             return false;
+        }
+    }
+
+    @Override
+    public void deleteByPattern(CacheModule module, String pattern) {
+        if (StringUtils.isBlank(pattern)) return;
+        String realPattern = buildRealKey(module, pattern);
+
+        Set<String> keys = new HashSet<>();
+        try (Cursor<String> cursor = redisTemplate.scan(ScanOptions.scanOptions().match(realPattern).build())) {
+            while (cursor.hasNext()) keys.add(cursor.next());
+            redisTemplate.delete(keys);
+        } catch (Exception e) {
+            log.error("删除模块下所有匹配的缓存失败，realPattern: {}", realPattern, e);
         }
     }
 
@@ -123,7 +137,7 @@ public class RedisCacheService implements CacheService {
         try {
             return Boolean.TRUE.equals(redisTemplate.expire(realKey, duration));
         } catch (Exception e) {
-            log.error("更新国企过期时间缓存失败，key: {}", key, e);
+            log.error("更新国企过期时间缓存失败，realKey: {}", realKey, e);
             return false;
         }
     }
@@ -138,7 +152,7 @@ public class RedisCacheService implements CacheService {
             while (cursor.hasNext()) keys.add(cursor.next());
             return keys;
         } catch (Exception e) {
-            log.error("获取匹配键失败，pattern: {}", pattern, e);
+            log.error("获取匹配键失败，realPattern: {}", realPattern, e);
             return Collections.emptySet();
         }
     }

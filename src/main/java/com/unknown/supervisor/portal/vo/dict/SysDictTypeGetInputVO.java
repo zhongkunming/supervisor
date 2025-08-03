@@ -1,4 +1,4 @@
-package com.unknown.supervisor.portal.vo.dicttype;
+package com.unknown.supervisor.portal.vo.dict;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
