@@ -7,17 +7,19 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Strings;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 
-import java.nio.charset.StandardCharsets;
+import java.io.IOException;
 
 import static com.unknown.supervisor.core.filter.ContextConst.START_TIME;
 import static com.unknown.supervisor.core.filter.ContextConst.TRANS_NO;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.apache.commons.lang3.Strings.CS;
 
 /**
  * 系统日志拦截器
@@ -29,6 +31,7 @@ import static com.unknown.supervisor.core.filter.ContextConst.TRANS_NO;
 @RequiredArgsConstructor
 public class SysLogInterceptor implements HandlerInterceptor {
 
+    private final static String[] IGNORE_CONTENT_TYPE = {"multipart", "stream"};
     private final SysLogService sysLogService;
 
     @Override
@@ -85,22 +88,26 @@ public class SysLogInterceptor implements HandlerInterceptor {
 
         // 请求体和响应体
         if (request instanceof ContentCachingRequestWrapper wrapper) {
-            byte[] content = wrapper.getContentAsByteArray();
             String contentType = wrapper.getContentType();
-            if (content.length > 0 &&
-                    !Strings.CS.containsAny(contentType, "multipart", "stream")) {
-                String requestBody = new String(content, StandardCharsets.UTF_8);
-                sysLog.setRequestBody(requestBody);
+            if (!CS.containsAny(contentType, IGNORE_CONTENT_TYPE)) {
+                try {
+                    String requestBody = IOUtils.toString(wrapper.getInputStream(), UTF_8);
+                    sysLog.setRequestBody(requestBody);
+                } catch (IOException e) {
+                    log.error("读取请求体异常", e);
+                }
             }
         }
 
         if (response instanceof ContentCachingResponseWrapper wrapper) {
-            byte[] content = wrapper.getContentAsByteArray();
             String contentType = wrapper.getContentType();
-            if (content.length > 0 &&
-                    !Strings.CS.containsAny(contentType, "multipart", "stream")) {
-                String responseBody = new String(content, StandardCharsets.UTF_8);
-                sysLog.setResponseBody(responseBody);
+            if (!CS.containsAny(contentType, IGNORE_CONTENT_TYPE)) {
+                try {
+                    String responseBody = IOUtils.toString(wrapper.getContentInputStream(), UTF_8);
+                    sysLog.setResponseBody(responseBody);
+                } catch (IOException e) {
+                    log.error("读取响应体异常", e);
+                }
             }
         }
 
