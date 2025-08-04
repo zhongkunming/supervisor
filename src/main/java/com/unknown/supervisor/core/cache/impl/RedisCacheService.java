@@ -112,7 +112,7 @@ public class RedisCacheService implements CacheService {
             while (cursor.hasNext()) keys.add(cursor.next());
             redisTemplate.delete(keys);
         } catch (Exception e) {
-            log.error("删除模块下所有匹配的缓存失败，realPattern: {}", realPattern, e);
+            log.error("按照匹配模式删除缓存失败，pattern: {}", realPattern, e);
         }
     }
 
@@ -137,7 +137,7 @@ public class RedisCacheService implements CacheService {
         try {
             return Boolean.TRUE.equals(redisTemplate.expire(realKey, duration));
         } catch (Exception e) {
-            log.error("更新国企过期时间缓存失败，realKey: {}", realKey, e);
+            log.error("更新缓存过期时间失败，realKey: {}", realKey, e);
             return false;
         }
     }
@@ -152,7 +152,7 @@ public class RedisCacheService implements CacheService {
             while (cursor.hasNext()) keys.add(cursor.next());
             return keys;
         } catch (Exception e) {
-            log.error("获取匹配键失败，realPattern: {}", realPattern, e);
+            log.error("按照匹配模式获取缓存键失败，pattern: {}", realPattern, e);
             return Collections.emptySet();
         }
     }
@@ -163,7 +163,7 @@ public class RedisCacheService implements CacheService {
             Set<String> keys = keys(module, "*");
             redisTemplate.delete(keys);
         } catch (Exception e) {
-            log.error("清空缓存失败", e);
+            log.error("清空模块缓存失败", e);
         }
     }
 
