@@ -1,9 +1,9 @@
 package com.unknown.supervisor.portal.service;
 
 import com.unknown.supervisor.core.common.PageResult;
+import com.unknown.supervisor.portal.dto.dict.SysDictDataDTO;
 import com.unknown.supervisor.portal.vo.dict.*;
-import com.unknown.supervisor.portal.vo.dictdata.SysDictDataQueryInputVO;
-import com.unknown.supervisor.portal.vo.dictdata.SysDictDataVO;
+import jakarta.validation.Valid;
 
 import java.util.List;
 
@@ -28,7 +28,7 @@ public interface SysDictService {
      * @param inputVO 查询字典类型
      * @return 字典类型信息
      */
-    SysDictTypeVO getTypeById(SysDictTypeGetInputVO inputVO);
+    SysDictTypeVO getDictTypeById(SysDictTypeGetInputVO inputVO);
 
     /**
      * 新增字典类型
@@ -59,5 +59,42 @@ public interface SysDictService {
 
     List<SysDictTypeVO> getDictTypeListAll();
 
+    /**
+     * 分页查询字典数据列表
+     *
+     * @param inputVO 查询条件
+     * @return 字典数据列表
+     */
     PageResult<SysDictDataVO> pageQueryDictData(SysDictDataQueryInputVO inputVO);
+
+    /**
+     * 根据ID查询字典数据信息
+     *
+     * @param inputVO 查询字典数据
+     * @return 字典数据信息
+     */
+    SysDictDataVO getDictDataById(SysDictDataGetInputVO inputVO);
+
+    /**
+     * 新增字典数据
+     *
+     * @param inputVO 字典数据信息
+     */
+    void createDictData(SysDictDataCreateInputVO inputVO);
+
+    /**
+     * 修改字典数据
+     *
+     * @param inputVO 字典数据信息
+     */
+    void updateDictData(SysDictDataUpdateInputVO inputVO);
+
+    /**
+     * 删除字典数据
+     *
+     * @param inputVO 字典数据ID列表
+     */
+    void deleteDictData(SysDictDataDeleteInputVO inputVO);
+
+    void exportDictData(SysDictDataExportInputVO inputVO);
 }

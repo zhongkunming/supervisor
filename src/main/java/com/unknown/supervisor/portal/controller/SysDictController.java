@@ -4,8 +4,6 @@ import com.unknown.supervisor.core.common.JsonResult;
 import com.unknown.supervisor.core.common.PageResult;
 import com.unknown.supervisor.portal.service.SysDictService;
 import com.unknown.supervisor.portal.vo.dict.*;
-import com.unknown.supervisor.portal.vo.dictdata.SysDictDataQueryInputVO;
-import com.unknown.supervisor.portal.vo.dictdata.SysDictDataVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -37,10 +35,10 @@ public class SysDictController {
         return JsonResult.success(result);
     }
 
-    @PostMapping("/getTypeById")
+    @PostMapping("/getDictTypeById")
     @Operation(summary = "根据ID查询字典类型信息")
-    public JsonResult<SysDictTypeVO> getTypeById(@Valid @RequestBody SysDictTypeGetInputVO inputVO) {
-        SysDictTypeVO result = sysDictService.getTypeById(inputVO);
+    public JsonResult<SysDictTypeVO> getDictTypeById(@Valid @RequestBody SysDictTypeGetInputVO inputVO) {
+        SysDictTypeVO result = sysDictService.getDictTypeById(inputVO);
         return JsonResult.success(result);
     }
 
@@ -96,5 +94,39 @@ public class SysDictController {
     public JsonResult<PageResult<SysDictDataVO>> pageQueryDictData(@Valid @RequestBody SysDictDataQueryInputVO inputVO) {
         PageResult<SysDictDataVO> result = sysDictService.pageQueryDictData(inputVO);
         return JsonResult.success(result);
+    }
+
+    @PostMapping("/getDictDataById")
+    @Operation(summary = "根据ID查询字典数据信息")
+    public JsonResult<SysDictDataVO> getDictDataById(@Valid @RequestBody SysDictDataGetInputVO inputVO) {
+        SysDictDataVO result = sysDictService.getDictDataById(inputVO);
+        return JsonResult.success(result);
+    }
+
+    @PostMapping("/createDictData")
+    @Operation(summary = "新增字典数据")
+    public JsonResult<Void> createDictData(@Valid @RequestBody SysDictDataCreateInputVO inputVO) {
+        sysDictService.createDictData(inputVO);
+        return JsonResult.success();
+    }
+
+    @PostMapping("/updateDictData")
+    @Operation(summary = "修改字典数据")
+    public JsonResult<Void> updateDictData(@Valid @RequestBody SysDictDataUpdateInputVO inputVO) {
+        sysDictService.updateDictData(inputVO);
+        return JsonResult.success();
+    }
+
+    @PostMapping("/deleteDictData")
+    @Operation(summary = "删除字典数据")
+    public JsonResult<Void> deleteDictData(@Valid @RequestBody SysDictDataDeleteInputVO inputVO) {
+        sysDictService.deleteDictData(inputVO);
+        return JsonResult.success();
+    }
+
+    @PostMapping("/exportDictData")
+    @Operation(summary = "导出字典数据")
+    public void exportDictData(@Valid @RequestBody SysDictDataExportInputVO inputVO) {
+        sysDictService.exportDictData(inputVO);
     }
 }

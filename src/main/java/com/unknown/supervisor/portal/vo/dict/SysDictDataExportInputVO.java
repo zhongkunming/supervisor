@@ -1,19 +1,16 @@
-package com.unknown.supervisor.portal.vo.dictdata;
+package com.unknown.supervisor.portal.vo.dict;
 
-import com.unknown.supervisor.core.common.PageRequest;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 /**
- * 查询字典数据VO
+ * 导出字典数据VO
  *
  * @author zhongkunming
  */
 @Data
-@EqualsAndHashCode(callSuper = true)
-@Schema(description = "查询字典数据VO")
-public class SysDictDataQueryInputVO extends PageRequest {
+@Schema(description = "导出字典数据VO")
+public class SysDictDataExportInputVO {
 
     /**
      * 字典类型

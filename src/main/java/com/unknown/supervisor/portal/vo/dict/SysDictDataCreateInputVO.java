@@ -1,25 +1,17 @@
-package com.unknown.supervisor.portal.vo.dictdata;
+package com.unknown.supervisor.portal.vo.dict;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 /**
- * 更新字典数据VO
+ * 创建字典数据VO
  *
  * @author zhongkunming
  */
 @Data
-@Schema(description = "更新字典数据VO")
-public class SysDictDataUpdateInputVO {
-
-    /**
-     * 主键ID
-     */
-    @NotNull(message = "字典数据ID不能为空")
-    @Schema(description = "主键ID", requiredMode = Schema.RequiredMode.REQUIRED)
-    private Long id;
+@Schema(description = "创建字典数据VO")
+public class SysDictDataCreateInputVO {
 
     /**
      * 字典类型
