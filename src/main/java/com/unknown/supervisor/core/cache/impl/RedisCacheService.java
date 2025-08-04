@@ -4,6 +4,7 @@ import com.unknown.supervisor.core.cache.CacheModule;
 import com.unknown.supervisor.core.cache.CacheService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.Cursor;
@@ -12,9 +13,7 @@ import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Supplier;
 
 /**
@@ -99,6 +98,20 @@ public class RedisCacheService implements CacheService {
         } catch (Exception e) {
             log.error("删除缓存失败，realKey: {}", realKey, e);
             return false;
+        }
+    }
+
+    @Override
+    public void delete(CacheModule module, Collection<String> keys) {
+        if (CollectionUtils.isEmpty(keys)) return;
+        List<String> realKeys = new ArrayList<>();
+        for (String key : keys) {
+            realKeys.add(buildRealKey(module, key));
+        }
+        try {
+            redisTemplate.delete(realKeys);
+        } catch (Exception e) {
+            log.error("批量删除缓存失败，realKeys: {}", realKeys, e);
         }
     }
 

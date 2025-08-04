@@ -1,6 +1,7 @@
 package com.unknown.supervisor.core.cache;
 
 import java.time.Duration;
+import java.util.Collection;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -72,6 +73,8 @@ public interface CacheService {
      * @return 是否删除成功
      */
     boolean delete(CacheModule module, String key);
+
+    void delete(CacheModule module, Collection<String> keys);
 
     /**
      * 删除模块下所有匹配的缓存
